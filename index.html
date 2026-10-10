@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#ff4f9a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>o nosso wrapped</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rosa:#ff4f9a; --rosa-forte:#e8247a; --rosa-claro:#ffc4dc; --rosa-bebe:#ffe4ef;
+  --creme:#fff6ee; --vinho:#3b0820; --vinho-2:#5c0f33; --pessego:#ffb59e;
+  --fonte:'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --topo:env(safe-area-inset-top, 0px);
+  --baixo:env(safe-area-inset-bottom, 0px);
+  --u:3.9px; --v:8px; /* 1% da largura e da altura do palco (o JS acerta) */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#1e0410}
+body{
+  font-family:var(--fonte);color:var(--vinho);
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+img{-webkit-touch-callout:none;pointer-events:none;display:block}
+button{font-family:inherit;color:inherit;cursor:pointer}
+
+/* ---------- o palco (tela cheia no celular, em pé no computador) ---------- */
+#palco{position:fixed;top:0;bottom:0;left:0;right:0;overflow:hidden;touch-action:none;background:var(--rosa-bebe);cursor:pointer}
+@media (min-aspect-ratio: 4/5){
+  #palco{left:50%;right:auto;width:calc(100vh * 9 / 16);transform:translateX(-50%)}
+  body{background:radial-gradient(circle at 50% 40%, #5c0f33, #1e0410 70%)}
+}
+#fundo{position:absolute;inset:0;width:100%;height:100%;display:block}
+#palco.sem-webgl #fundo{display:none}
+#grao{
+  position:absolute;inset:0;pointer-events:none;opacity:.09;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- barrinhas e som ---------- */
+#topo{position:absolute;left:0;right:0;top:0;z-index:5;padding:calc(var(--topo) + 10px) 12px 0;display:flex;gap:10px;align-items:center;pointer-events:none;transition:opacity .5s}
+#barras{flex:1;display:flex;gap:4px}
+.barra{flex:1;height:3px;border-radius:3px;background:currentColor;opacity:.3;overflow:hidden;position:relative}
+.barra.feita{opacity:1}
+.barra.agora{opacity:1;background:transparent}
+.barra.agora::before{content:'';position:absolute;inset:0;background:currentColor;opacity:.3}
+.barra i{position:absolute;inset:0;background:currentColor;transform-origin:left;transform:scaleX(0)}
+.barra.feita i{transform:scaleX(1)}
+#som{pointer-events:auto;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.22);display:grid;place-items:center;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#som svg{width:18px;height:18px}
+#som .x{display:none}
+#palco.mudo #som .x{display:block}
+#palco.mudo #som .ondas{display:none}
+#palco[data-tema=claro] #topo{color:var(--vinho)}
+#palco[data-tema=forte] #topo,#palco[data-tema=escuro] #topo,#palco[data-tema=foto] #topo{color:#fff}
+#palco[data-tema=foto] #barras{filter:drop-shadow(0 1px 3px rgba(0,0,0,.45))}
+#palco[data-tema=claro] #som{background:rgba(59,8,32,.1)}
+#palco.no-comeco #barras{opacity:0}
+
+/* ---------- cada tela ---------- */
+#historias{position:absolute;inset:0}
+.historia{
+  position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:calc(var(--topo) + 64px) calc(var(--u) * 7.5) calc(var(--baixo) + 36px);
+  overflow:hidden;
+}
+.historia.ativa{display:flex}
+.tema-claro{color:var(--vinho)}
+.tema-forte{color:var(--creme)}
+.tema-escuro{color:var(--rosa-claro)}
+.tema-foto{color:var(--creme);justify-content:flex-end}
+.conteudo{position:relative;z-index:2;display:flex;flex-direction:column;gap:min(calc(var(--u)*3.4), calc(var(--v)*1.7))}
+
+.olho{font-size:min(calc(var(--u)*3.5), calc(var(--v)*1.75));font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.gigante{font-size:min(calc(var(--u)*30), calc(var(--v)*15));font-weight:800;line-height:.86;letter-spacing:-.05em;font-variation-settings:'opsz' 96}
+.grande{font-size:min(calc(var(--u)*15), calc(var(--v)*7.4));font-weight:800;line-height:.95;letter-spacing:-.035em;font-variation-settings:'opsz' 96}
+.medio{font-size:min(calc(var(--u)*8.6), calc(var(--v)*4.3));font-weight:700;line-height:1.05;letter-spacing:-.02em}
+.texto{font-size:min(calc(var(--u)*5.3), calc(var(--v)*2.65));font-weight:500;line-height:1.3;white-space:pre-line}
+.pequeno{font-size:min(calc(var(--u)*3.8), calc(var(--v)*1.9));font-weight:500;opacity:.78}
+.destaque{color:var(--rosa-forte)}
+.tema-forte .destaque{color:var(--vinho)}
+.tema-escuro .destaque{color:var(--rosa)}
+.tema-foto .destaque{color:var(--rosa-claro)}
+.pilula{display:inline-flex;align-self:flex-start;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.22);font-weight:700;font-size:min(calc(var(--u)*3.9), calc(var(--v)*1.95))}
+.tema-claro .pilula{background:rgba(59,8,32,.08)}
+.linha{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- animações (o estado final é o normal; elas só entram) ---------- */
+@keyframes subir{from{opacity:0;transform:translateY(calc(var(--u)*9))}}
+@keyframes surgir{from{opacity:0;transform:scale(.55)}}
+@keyframes aparecer{from{opacity:0}}
+@keyframes esticarX{from{transform:scaleX(0)}}
+@keyframes esticarY{from{transform:scaleY(0)}}
+@keyframes girarEntra{from{opacity:0;transform:rotate(var(--r0,-30deg)) scale(.3)}}
+@keyframes girarSempre{to{transform:rotate(360deg)}}
+@keyframes flutuar{50%{transform:translateY(calc(var(--u)*-2)) rotate(var(--r,0deg))}}
+@keyframes descer{from{transform:translateY(-30%)}to{transform:translateY(0)}}
+@keyframes subirColuna{from{transform:translateY(0)}to{transform:translateY(-30%)}}
+@keyframes zoom{from{transform:scale(1.18)}to{transform:scale(1.02)}}
+.ativa .a-subir{animation:subir .9s cubic-bezier(.16,1,.3,1) var(--d,0s) both}
+.ativa .a-surgir{animation:surgir .9s cubic-bezier(.34,1.56,.64,1) var(--d,0s) both}
+.ativa .a-aparecer{animation:aparecer 1s ease var(--d,0s) both}
+.ativa .a-esticar{animation:esticarX 1.2s cubic-bezier(.16,1,.3,1) var(--d,0s) both;transform-origin:left center}
+.ativa .a-coluna{animation:esticarY 1s cubic-bezier(.16,1,.3,1) var(--d,0s) both;transform-origin:bottom center}
+.ativa .a-girar{animation:girarEntra 1.1s cubic-bezier(.34,1.4,.64,1) var(--d,0s) both}
+#palco.pausado .historia.ativa,#palco.pausado .historia.ativa *{animation-play-state:paused!important}
+#palco.parado .historia,#palco.parado .historia *{animation-duration:0s!important;animation-delay:0s!important;animation-iteration-count:1!important}
+@media (prefers-reduced-motion: reduce){
+  .ativa .a-subir,.ativa .a-surgir,.ativa .a-girar{animation-name:aparecer}
+  .forma,.mosaico .col{animation:none!important}
+}
+
+/* ---------- formas de enfeite ---------- */
+.forma{position:absolute;z-index:1;pointer-events:none}
+.forma.gira{animation:girarSempre 40s linear infinite}
+.forma.boia{animation:flutuar 6s ease-in-out infinite}
+
+/* ---------- abertura ---------- */
+.abertura .conteudo{align-items:flex-start}
+.botao{
+  margin-top:min(calc(var(--u)*4), calc(var(--v)*2));
+  padding:16px 28px;border-radius:999px;border:0;background:var(--vinho);color:var(--creme);
+  font-size:min(calc(var(--u)*4.8), calc(var(--v)*2.4));font-weight:800;letter-spacing:-.01em;display:inline-flex;gap:10px;align-items:center;
+  box-shadow:0 10px 30px rgba(59,8,32,.25)
+}
+.tema-forte .botao,.tema-escuro .botao,.tema-foto .botao{background:var(--creme);color:var(--vinho)}
+.botao.claro{background:rgba(255,255,255,.22);color:inherit;box-shadow:none}
+
+/* ---------- polaroid ---------- */
+.polaroid{position:absolute;z-index:1;background:#fff;padding:8px 8px 30px;border-radius:4px;box-shadow:0 18px 40px rgba(59,8,32,.28);transform:rotate(var(--r,6deg))}
+.polaroid img{width:100%;height:100%;object-fit:cover;border-radius:2px}
+
+/* ---------- barras (quem manda mais, horas, meses) ---------- */
+.dupla{display:flex;flex-direction:column;gap:14px;margin:6px 0}
+.dupla .nome{display:flex;justify-content:space-between;font-weight:700;font-size:min(calc(var(--u)*4.4), calc(var(--v)*2.2));margin-bottom:6px}
+.dupla .trilho{height:min(calc(var(--u)*9), calc(var(--v)*4.5));border-radius:999px;background:rgba(59,8,32,.08);overflow:hidden}
+.dupla .enche{height:100%;border-radius:999px;background:var(--rosa-forte)}
+.dupla .enche.ele{background:var(--vinho)}
+.colunas{display:flex;align-items:flex-end;gap:3px;height:min(calc(var(--u)*34), calc(var(--v)*17))}
+.colunas i{flex:1;border-radius:3px 3px 0 0;background:currentColor;opacity:.32;min-height:2px}
+.colunas i.pico{opacity:1;background:var(--rosa)}
+.eixo{display:flex;justify-content:space-between;font-size:12px;font-weight:600;opacity:.6;margin-top:6px}
+.meses .colunas{height:min(calc(var(--u)*16), calc(var(--v)*8));gap:8px}
+.meses .colunas i{opacity:.45;border-radius:4px 4px 0 0}
+
+/* ---------- emojis ---------- */
+.emoji-gigante{font-size:min(calc(var(--u)*40), calc(var(--v)*20));line-height:1.15;margin-bottom:6px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
+.emojis{display:flex;gap:10px;flex-wrap:wrap}
+.emojis span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 12px;border-radius:18px;background:rgba(59,8,32,.07);font-weight:700;font-size:13px}
+.emojis b{font-size:min(calc(var(--u)*8), calc(var(--v)*4));font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-weight:400}
+
+/* ---------- listas "top" ---------- */
+.lista{display:flex;flex-direction:column;gap:min(calc(var(--u)*3.2), calc(var(--v)*1.6))}
+.item{display:flex;align-items:center;gap:min(calc(var(--u)*4), calc(var(--v)*2))}
+.item .pos{font-size:min(calc(var(--u)*10), calc(var(--v)*5));font-weight:800;width:1.1em;flex:none;letter-spacing:-.04em;line-height:1}
+.item .capa{width:min(calc(var(--u)*15), calc(var(--v)*7.5));height:min(calc(var(--u)*15), calc(var(--v)*7.5));border-radius:6px;object-fit:cover;flex:none;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.item .tit{font-size:min(calc(var(--u)*5.6), calc(var(--v)*2.8));font-weight:800;line-height:1.05;letter-spacing:-.02em}
+.item .sub{font-size:min(calc(var(--u)*3.7), calc(var(--v)*1.85));font-weight:500;opacity:.75;margin-top:2px}
+.item:first-child .tit{font-size:min(calc(var(--u)*7), calc(var(--v)*3.5))}
+
+/* ---------- capas em leque ---------- */
+.leque{position:relative;height:min(calc(var(--u)*42), calc(var(--v)*21));margin-bottom:6px}
+.leque img{position:absolute;left:50%;top:0;width:min(calc(var(--u)*38), calc(var(--v)*19));height:min(calc(var(--u)*38), calc(var(--v)*19));margin-left:calc(min(calc(var(--u)*38), calc(var(--v)*19)) / -2);border-radius:8px;object-fit:cover;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+
+/* ---------- foto de fundo inteira ---------- */
+.foto-fundo{position:absolute;inset:0;z-index:0}
+.foto-fundo img,.foto-fundo video{width:100%;height:100%;object-fit:cover;display:block}
+.ativa .foto-fundo img{animation:zoom 12s ease-out both}
+.foto-fundo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(59,8,32,.35) 0%, rgba(59,8,32,0) 30%, rgba(59,8,32,.55) 60%, rgba(59,8,32,.92) 100%)}
+
+/* ---------- mosaico de fotos ---------- */
+.mosaico{position:absolute;inset:-10% -14%;display:flex;gap:10px;transform:rotate(-8deg);z-index:0;opacity:.95}
+.mosaico .col{flex:1;display:flex;flex-direction:column;gap:10px}
+.ativa .mosaico .col{animation:subirColuna 14s linear both}
+.ativa .mosaico .col:nth-child(2){animation-name:descer}
+.mosaico img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px}
+.selo{align-self:center;text-align:center;background:var(--creme);color:var(--vinho);padding:min(calc(var(--u)*6), calc(var(--v)*3)) min(calc(var(--u)*8), calc(var(--v)*4));border-radius:28px;box-shadow:0 20px 50px rgba(59,8,32,.35)}
+
+/* ---------- balão da primeira mensagem ---------- */
+.conversa{display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin:6px 0}
+.respondeu{font-size:min(calc(var(--u)*3.4), calc(var(--v)*1.7));font-weight:600;opacity:.7}
+.story-mini{width:min(calc(var(--u)*22), calc(var(--v)*11));height:min(calc(var(--u)*36), calc(var(--v)*18));border-radius:14px;background:linear-gradient(160deg,#ffd0e2,#ff7eb3 55%,#ffb59e);box-shadow:0 10px 26px rgba(59,8,32,.25);position:relative;overflow:hidden}
+.story-mini::after{content:'';position:absolute;left:10px;right:10px;top:8px;height:3px;border-radius:3px;background:rgba(255,255,255,.7)}
+.balao.dela{align-self:flex-start;border-radius:24px 24px 24px 6px;background:#fff;color:var(--vinho);box-shadow:0 12px 30px rgba(59,8,32,.14)}
+.balao{max-width:86%;align-self:flex-end;padding:14px 18px;border-radius:24px 24px 6px 24px;background:linear-gradient(135deg,#ff4f9a,#d6145c);color:#fff;font-size:min(calc(var(--u)*5.6), calc(var(--v)*2.8));font-weight:600;line-height:1.25;box-shadow:0 12px 30px rgba(214,20,92,.35)}
+
+/* ---------- motivos ---------- */
+.motivo{min-height:3.3em;display:flex;align-items:flex-end}
+
+/* ---------- resumo ---------- */
+.cartao{background:var(--creme);color:var(--vinho);border-radius:26px;padding:min(calc(var(--u)*4.5), calc(var(--v)*2.2));box-shadow:0 24px 60px rgba(59,8,32,.3);display:flex;flex-direction:column;gap:min(calc(var(--u)*3.5), calc(var(--v)*1.6))}
+.cartao .foto{height:min(calc(var(--u)*46), calc(var(--v)*23));border-radius:18px;overflow:hidden}
+.cartao .foto img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.grade{display:grid;grid-template-columns:1fr 1fr;gap:min(calc(var(--u)*3), calc(var(--v)*1.4)) 14px}
+.grade .rot{font-size:min(calc(var(--u)*3.2), calc(var(--v)*1.6));font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.grade .val{font-size:min(calc(var(--u)*6.4), calc(var(--v)*3.2));font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.cartao .assina{display:flex;justify-content:space-between;font-weight:700;font-size:min(calc(var(--u)*3.4), calc(var(--v)*1.7));opacity:.7}
+</style>
+</head>
+<body>
+<div id="palco" class="no-comeco">
+  <canvas id="fundo"></canvas>
+  <div id="grao"></div>
+  <div id="historias"></div>
+  <div id="topo">
+    <div id="barras"></div>
+    <button id="som" aria-label="ligar ou desligar o som">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor"/><g class="ondas"><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></g><g class="x"><path d="m16 9 6 6"/><path d="m22 9-6 6"/></g></svg>
+    </button>
+  </div>
+</div>
+
+<script src="dados-whatsapp.js" onerror="window.WHATS = null"></script>
+<script>
+/* =====================================================================
+   O QUE DÁ PRA TROCAR (os textos são rascunhos, pode mudar à vontade)
+   o site é o Romário falando com a Julia
+   ===================================================================== */
+var COMECO = [2025, 9, 17];   // a primeira mensagem no whatsapp (ano, mês, dia)
+var BEIJO = [2025, 10, 8];    // o primeiro beijo
+var PEDIDO = [2025, 10, 12];  // o dia em que começaram a namorar (eles comemoram todo dia 12)
+var TOTAL_FOTOS = 26;         // só aparece se não tiver os números do whatsapp
+
+// as músicas: quando o Romário mandar os arquivos, coloque em musicas/ e mude pra true
+var COM_MUSICA = false;
+
+var TEXTOS = {
+  abertura: 'Julia & Romário',
+  aberturaDestaque: '1 ano',
+  comeco: 'tudo começou em',
+  comecoDepois: 'desde então, foram',
+  comecoFim: 'e eu lembro de muitas delas.',
+  primeiraOlho: '17/09/2025 · no whatsapp',
+  primeiraAntes: 'a primeira mensagem foi sua.\ne era sobre pastel:',
+  primeiraEla: ['Oiiii', 'Qual o nome da loja do pastel??'],
+  primeiraEle: ['Q’Sabor'],
+  primeiraDepois: 'e olha onde a gente foi parar.',
+  beijoTitulo: 'o primeiro beijo',
+  beijoTexto: 'ainda lembro do nosso primeiro beijo\ne de como aquele momento mudou tudo.',
+  beijoDepois: 'no dia seguinte eu já perguntei: “nosso próximo beijo sai quando?”',
+  quemElaGanhou: 'você ganhou. mas eu vou virar.',
+  quemEuGanhei: 'eu ganhei. mas quem puxa assunto primeiro é você.',
+  recordeTexto: 'eu não lembro o assunto, mas lembro que era você.',
+  recordePedido: 'o dia do pedido. eu não lembro de tudo que a gente falou, mas lembro do “então eu sou”.',
+  pedidoOlho: '12/10/2025 · 22h48',
+  // a conversa do pedido: quem fala ('ela' ou 'ele') e o que falou
+  pedidoConversa: [['ela', 'Quer ser?'], ['ele', 'Vc é minha namorada?'], ['ela', 'Então eu sou']],
+  videoTexto: 'e tem coisa que foto nenhuma guarda.',
+  fotos: 'e cada uma delas virou lembrança.',
+  motivosFim: 'e mais uns mil que não cabem aqui.',
+  finalTitulo: 'feliz 1 ano, meu amor.',
+  finalTexto: 'que a nossa história continue crescendo como uma flor bem cuidada, e que nunca falte carinho pra fazer ela florescer.',
+  finalTeAmo: 'eu te amo, Julia.',
+  assinatura: 'com amor, Romário',
+  assinaturaCurta: 'R & J'
+};
+
+// os top momentos (o primeiro é o número 1)
+var MOMENTOS = [
+  { titulo: 'o primeiro beijo',        sub: '08/10/2025 · e tudo mudou' },
+  { titulo: 'o pedido',                sub: '12/10/2025 · “quer ser?” “então eu sou”' },
+  { titulo: 'você e a minha família',  sub: '14/11/2025 · “eu adorei conhecer tua família”' },
+  { titulo: 'o buquê',                 sub: '06/03/2026 · “eu amei o buque”' },
+  { titulo: 'a ligação de 13 horas',   sub: '22/07/2026 · e ninguém desligou' }
+];
+
+// as top músicas: quando ele mandar, preencha (capa = foto em fotos/, sem o .jpg)
+// ex.: { titulo: 'Nome da música', artista: 'Artista', capa: 'capa1' }
+// enquanto estiver vazia, as telas de músicas e da artista não aparecem
+var MUSICAS = [];
+var ARTISTA = null;   // ex.: { nome: 'Artista', texto: '2 das nossas 5 músicas são dela.', capas: ['capa1', 'capa2', 'capa3'] }
+
+// os motivos (rascunho feito com as frases que o Romário mandou)
+var MOTIVOS = [
+  'pelo seu olhar',
+  'pelas nossas conversas',
+  'pela sua risada',
+  'pelos seus abraços',
+  'pelo seu jeito delicado de lírio',
+  'pelo seu sorriso de girassol',
+  'porque você virou a minha luz',
+  'pelos pequenos detalhes',
+  'pela vontade de estar perto, sem motivo nenhum',
+  'pelas nossas histórias e brincadeiras',
+  'porque com você tudo é verdadeiro',
+  'por tudo que a gente ainda vai viver',
+  'porque eu não consigo pensar no futuro sem você',
+  'porque você é a melhor parte da minha vida',
+  'porque eu quero continuar te descobrindo',
+  'porque eu quero uma vida inteira com você'
+];
+
+/* ===================================================================== */
+
+var P = new URLSearchParams(location.search);
+var TESTE = P.get('teste') === '1';
+var W = P.get('semwhats') === '1' ? null : (window.WHATS || null);
+var palco = document.getElementById('palco');
+var historias = document.getElementById('historias');
+var barras = document.getElementById('barras');
+
+function clamp(v, a, b){ return v < a ? a : (v > b ? b : v); }
+function fmt(n){ return Math.round(n).toLocaleString('pt-BR'); }
+function dia(a){ return new Date(a[0], a[1] - 1, a[2]); }
+function ddmm(d){ return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); }
+function iso(d){ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function isoParaData(s){ var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function conta(alvo, d, t){ return '<span class="conta" data-alvo="' + alvo + '" data-d="' + (d || 0) + '" data-t="' + (t || 1.6) + '">0</span>'; }
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+var HOJE = (function(){
+  var h = P.get('hoje');
+  var d = h ? isoParaData(h) : new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+})();
+var DIAS = Math.round((HOJE - dia(COMECO)) / 864e5);
+var DIAS_NAMORO = Math.round((HOJE - dia(PEDIDO)) / 864e5);
+var MESES_NAMORO = (function(){
+  var m = 0;
+  while (new Date(PEDIDO[0], PEDIDO[1] - 1 + m + 1, PEDIDO[2]) <= HOJE) m++;
+  return m;
+})();
+var PROXIMO_MES = new Date(PEDIDO[0], PEDIDO[1] - 1 + MESES_NAMORO + 1, PEDIDO[2]);
+var DIAS_ATE_PROXIMO = Math.round((PROXIMO_MES - HOJE) / 864e5);
+var HOJE_E_MESVERSARIO = HOJE.getDate() === PEDIDO[2] && MESES_NAMORO > 0;
+
+/* ---------- formas de enfeite ---------- */
+function estrela(pontas, dentro){
+  var pts = [];
+  for (var i = 0; i < pontas * 2; i++){
+    var r = i % 2 ? dentro : 50, a = Math.PI * i / pontas - Math.PI / 2;
+    pts.push((50 + r * Math.cos(a)).toFixed(1) + ',' + (50 + r * Math.sin(a)).toFixed(1));
+  }
+  return '<polygon points="' + pts.join(' ') + '"/>';
+}
+var FORMAS = {
+  estrela: estrela(12, 38),
+  explosao: estrela(16, 30),
+  flor: (function(){ var s = ''; for (var i = 0; i < 6; i++){ var a = i * Math.PI / 3; s += '<circle cx="' + (50 + 24 * Math.cos(a)).toFixed(1) + '" cy="' + (50 + 24 * Math.sin(a)).toFixed(1) + '" r="22"/>'; } return s + '<circle cx="50" cy="50" r="16" opacity=".55"/>'; })(),
+  coracao: '<path d="M50 88 C20 68 6 50 6 32 C6 18 17 8 30 8 C39 8 46 13 50 21 C54 13 61 8 70 8 C83 8 94 18 94 32 C94 50 80 68 50 88Z"/>',
+  circulo: '<circle cx="50" cy="50" r="48"/>',
+  onda: '<path d="M2 50 Q14 20 26 50 T50 50 T74 50 T98 50" fill="none" stroke-width="9" stroke-linecap="round"/>'
+};
+// forma('estrela', x%, y%, tamanho em % da largura, cor, classe extra, delay)
+function forma(tipo, x, y, tam, cor, extra, d){
+  var traco = tipo === 'onda';
+  return '<div class="forma ' + (extra || '') + '" style="left:' + x + '%;top:' + y + '%;width:calc(var(--u)*' + tam + ');margin:calc(var(--u)*' + (-tam / 2) + ') 0 0 calc(var(--u)*' + (-tam / 2) + ')">' +
+    '<svg class="a-girar" style="--d:' + (d || 0) + 's;width:100%;display:block" viewBox="0 0 100 100" ' + (traco ? 'stroke="' + cor + '"' : 'fill="' + cor + '"') + '>' + FORMAS[tipo] + '</svg></div>';
+}
+function img(nome, classe){ return '<img ' + (classe ? 'class="' + classe + '" ' : '') + 'data-src="fotos/' + nome + '.jpg" alt="">'; }
+
+/* ---------- as telas ---------- */
+var HIST = [];
+function nova(h){
+  if (h.precisa === 'whats' && !W) return;
+  if (h.precisa === 'musicas' && !MUSICAS.length) return;
+  if (h.precisa === 'artista' && !ARTISTA) return;
+  HIST.push(h);
+}
+
+nova({ id: 'abertura', paleta: 'forte', dur: Infinity, html: function(){ return '' +
+  forma('explosao', 82, 18, 46, '#ffc4dc', 'gira', .2) +
+  forma('flor', 12, 80, 40, '#ff9ec7', 'gira', .5) +
+  forma('coracao', 86, 74, 22, '#3b0820', 'boia', .8) +
+  '<div class="conteudo abertura">' +
+    '<div class="olho a-subir" style="--d:.1s">' + esc(TEXTOS.abertura) + '</div>' +
+    '<div class="gigante a-subir" style="--d:.25s;font-size:min(calc(var(--u)*23.5), calc(var(--v)*12))">o nosso<br>wrapped</div>' +
+    '<div class="grande a-subir destaque" style="--d:.45s">' + esc(TEXTOS.aberturaDestaque || HOJE.getFullYear()) + '</div>' +
+    '<button class="botao a-surgir" style="--d:.8s" data-acao="comecar">começar <span aria-hidden="true">▶</span></button>' +
+    '<div class="pequeno a-aparecer" style="--d:1.2s">' + (COM_MUSICA ? 'liga o som · ' : '') + 'toca pra passar · segura pra pausar</div>' +
+  '</div>'; } });
+
+nova({ id: 'comeco', paleta: 'claro', musica: 'best-part', dur: 9.5, html: function(){
+  return '' +
+  forma('estrela', 84, 16, 34, '#ff9ec7', 'gira', .3) +
+  forma('onda', 22, 88, 40, '#ff4f9a', '', 3.4) +
+  '<div class="conteudo">' +
+    '<div class="medio a-subir" style="--d:.2s">' + esc(TEXTOS.comeco) + '</div>' +
+    '<div class="gigante destaque a-surgir" style="--d:.6s">' + ddmm(dia(COMECO)) + '</div>' +
+    '<div class="medio a-subir" style="--d:2.4s">' + esc(TEXTOS.comecoDepois) + '</div>' +
+    '<div class="gigante a-subir" style="--d:2.7s">' + conta(DIAS, 2.8, 1.8) + '</div>' +
+    '<div class="medio a-subir" style="--d:2.9s">dias</div>' +
+    '<div class="texto a-subir" style="--d:3.8s">ou ' + fmt(DIAS * 24) + ' horas. ' + esc(TEXTOS.comecoFim) + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'primeira', paleta: 'creme', musica: 'best-part', dur: 9, html: function(){
+  var baloes = '', d = 1.1;
+  TEXTOS.primeiraEla.forEach(function(t){ baloes += '<div class="balao dela a-surgir" style="--d:' + d.toFixed(2) + 's">' + esc(t) + '</div>'; d += .5; });
+  d += .7;
+  TEXTOS.primeiraEle.forEach(function(t){ baloes += '<div class="balao a-surgir" style="--d:' + d.toFixed(2) + 's">' + esc(t) + '</div>'; d += .5; });
+  return '' +
+  forma('coracao', 86, 14, 24, '#ffb8d2', 'boia', .3) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">' + esc(TEXTOS.primeiraOlho) + '</div>' +
+    '<div class="medio a-subir" style="--d:.4s;white-space:pre-line">' + esc(TEXTOS.primeiraAntes) + '</div>' +
+    '<div class="conversa">' + baloes + '</div>' +
+    '<div class="grande destaque a-subir" style="--d:' + (d + .4).toFixed(2) + 's">' + esc(TEXTOS.primeiraDepois) + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'beijo', paleta: 'forte', musica: 'best-part', dur: 8, html: function(){ return '' +
+  forma('coracao', 50, 30, 70, 'rgba(255,255,255,.16)', 'boia', .1) +
+  forma('flor', 90, 94, 22, '#ffc4dc', 'gira', .6) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">' + ddmm(dia(BEIJO)) + '/' + BEIJO[0] + '</div>' +
+    '<div class="gigante a-subir" style="--d:.4s">' + esc(TEXTOS.beijoTitulo) + '</div>' +
+    '<div class="texto a-subir" style="--d:1.4s">' + esc(TEXTOS.beijoTexto) + '</div>' +
+    '<div class="pilula a-subir" style="--d:2.8s">' + esc(TEXTOS.beijoDepois) + '</div>' +
+  '</div>'; } });
+
+/* --- as do WhatsApp (só aparecem com o dados-whatsapp.js) --- */
+// os dias seguidos conversando (e se começaram logo depois do primeiro beijo)
+function seguidos(){
+  if (W.diasFalando >= W.diasTotal) return 'e não teve um dia sequer sem conversar.';
+  if (W.maiorSequencia < 60) return 'a gente nunca fica sem assunto.';
+  var inicio = new Date(isoParaData(W.ate) - (W.maiorSequencia - 1) * 864e5);
+  var depoisDoBeijo = new Date(dia(BEIJO).getTime() + 864e5);
+  if (iso(inicio) === iso(depoisDoBeijo)) return 'e desde o dia seguinte ao primeiro beijo, não teve um dia sem conversar.';
+  return 'e foram ' + fmt(W.maiorSequencia) + ' dias seguidos sem ficar sem se falar.';
+}
+
+nova({ id: 'mensagens', precisa: 'whats', paleta: 'vinho', musica: 'best-part', dur: 8.5, html: function(){
+  var porDia = W.total / Math.max(1, W.diasTotal);
+  var maior = Math.max.apply(null, W.meses.map(function(m){ return m[1]; }));
+  var nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  var cols = W.meses.map(function(m, i){ return '<i class="a-coluna" style="--d:' + (2.6 + i * .08) + 's;height:' + Math.max(4, 100 * m[1] / maior) + '%"></i>'; }).join('');
+  var eixo = W.meses.map(function(m){ return '<span>' + nomesMes[+m[0].slice(5) - 1] + '</span>'; }).join('');
+  var aviso = W.completa ? '' : '<div class="pequeno a-aparecer" style="--d:3.4s">(desde ' + ddmm(isoParaData(W.desde)) + ', até onde o WhatsApp guardou)</div>';
+  return '' +
+  '<div class="polaroid a-girar" style="--d:.1s;--r:7deg;--r0:30deg;right:calc(var(--u)*6);top:calc(var(--topo) + 64px);width:calc(var(--u)*34);height:calc(var(--u)*44)">' + img('mensagens') + '</div>' +
+  '<div class="conteudo" style="margin-top:calc(var(--u)*30)">' +
+    '<div class="olho a-subir" style="--d:.3s">no whatsapp</div>' +
+    '<div class="medio a-subir" style="--d:.5s">nesse tempo, a gente trocou</div>' +
+    '<div class="gigante destaque a-surgir" style="--d:.9s">' + conta(W.total, 1, 2) + '</div>' +
+    '<div class="medio a-subir" style="--d:1.1s">mensagens</div>' +
+    '<div class="texto a-subir" style="--d:2.2s">umas ' + fmt(porDia) + ' por dia. ' + seguidos() + '</div>' +
+    '<div class="meses a-aparecer" style="--d:2.5s"><div class="colunas">' + cols + '</div><div class="eixo">' + eixo + '</div></div>' +
+    aviso +
+  '</div>'; } });
+
+nova({ id: 'quem', precisa: 'whats', paleta: 'claro', musica: 'best-part', dur: 8.5, html: function(){
+  var ela = W.pessoas.ela, ele = W.pessoas.ele, tot = Math.max(1, ela + ele);
+  var pe = Math.round(100 * ela / tot), pt = 100 - pe;
+  var veredito = esc(ela >= ele ? TEXTOS.quemElaGanhou : TEXTOS.quemEuGanhei);
+  var pa = W.puxaAssunto, totPa = pa.ela + pa.ele;
+  var puxa = totPa ? '<div class="pilula a-subir" style="--d:3.6s">quem puxa assunto primeiro no dia: você em ' + fmt(pa.ela) + ' dias, eu em ' + fmt(pa.ele) + '</div>' : '';
+  return '' +
+  forma('circulo', 90, 14, 30, '#ffb8d2', 'boia', .2) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">no whatsapp</div>' +
+    '<div class="grande a-subir" style="--d:.4s">quem manda mais mensagem?</div>' +
+    '<div class="dupla">' +
+      '<div class="a-subir" style="--d:1s"><div class="nome"><span>você</span><span>' + pe + '%</span></div><div class="trilho"><div class="enche a-esticar" style="--d:1.2s;width:' + pe + '%"></div></div><div class="pequeno" style="margin-top:4px">' + fmt(ela) + ' mensagens</div></div>' +
+      '<div class="a-subir" style="--d:1.3s"><div class="nome"><span>eu</span><span>' + pt + '%</span></div><div class="trilho"><div class="enche ele a-esticar" style="--d:1.5s;width:' + pt + '%"></div></div><div class="pequeno" style="margin-top:4px">' + fmt(ele) + ' mensagens</div></div>' +
+    '</div>' +
+    '<div class="texto a-subir" style="--d:2.6s">' + veredito + '</div>' +
+    puxa +
+  '</div>'; } });
+
+nova({ id: 'teamo', precisa: 'whats', paleta: 'vinho', musica: 'best-part', dur: 8, html: function(){
+  var t = W.teAmo, total = t.ela + t.ele;
+  var pt = W.primeiroTeAmo;
+  var primeiro = pt ? 'o primeiro foi em ' + ddmm(isoParaData(pt.data)) + '/' + pt.data.slice(0, 4) + ', às ' + pt.hora.replace(':', 'h') +
+    (pt.data === iso(dia(PEDIDO)) ? ', na noite do pedido. ' : '. ') + (pt.quem === 'ele' ? 'e fui eu que falei primeiro.' : 'e foi você que falou primeiro.') : 'e ainda acho pouco.';
+  return '' +
+  forma('coracao', 80, 20, 40, '#ff4f9a', 'boia', .3) +
+  forma('coracao', 16, 84, 24, '#ffc4dc', 'boia', .7) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">a frase do ano</div>' +
+    '<div class="grande a-subir" style="--d:.4s">“te amo”</div>' +
+    '<div class="gigante destaque a-surgir" style="--d:1s">' + conta(total, 1.1, 2) + '</div>' +
+    '<div class="medio a-subir" style="--d:1.3s">vezes</div>' +
+    '<div class="linha a-subir" style="--d:2.6s"><span class="pilula">você: ' + fmt(t.ela) + '</span><span class="pilula">eu: ' + fmt(t.ele) + '</span></div>' +
+    (W.teAmoRecorde && W.teAmoRecorde.vezes > 20 ?
+      '<div class="texto a-subir" style="--d:3.3s">fora aquele ' + ddmm(isoParaData(W.teAmoRecorde.data)) + ', em que ' + (W.teAmoRecorde.quem === 'ela' ? 'você mandou' : 'eu mandei') + ' <b class="destaque">' + fmt(W.teAmoRecorde.vezes) + '</b> numa mensagem só.</div>' :
+      '<div class="texto a-subir" style="--d:3.3s">' + esc(primeiro) + '</div>') +
+  '</div>'; } });
+
+nova({ id: 'emoji', precisa: 'whats', paleta: 'creme', musica: 'best-part', dur: 7.5, html: function(){
+  if (!W.emojis.length) return '<div class="conteudo"><div class="grande">sem emoji nenhum?</div></div>';
+  var resto = W.emojis.slice(1).map(function(e, i){ return '<span class="a-surgir" style="--d:' + (2.2 + i * .15) + 's"><b>' + e[0] + '</b>' + fmt(e[1]) + '</span>'; }).join('');
+  return '' +
+  forma('explosao', 50, 36, 92, '#ffd6e5', 'gira', 0) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">o emoji do ano</div>' +
+    '<div class="emoji-gigante a-surgir" style="--d:.6s">' + W.emojis[0][0] + '</div>' +
+    '<div class="medio a-subir" style="--d:1.3s">usado ' + conta(W.emojis[0][1], 1.4, 1.4) + ' vezes</div>' +
+    (resto ? '<div class="emojis">' + resto + '</div>' : '') +
+  '</div>'; } });
+
+nova({ id: 'hora', precisa: 'whats', paleta: 'escuro', musica: 'best-part', dur: 8.5, html: function(){
+  var h = W.horas, pico = h.indexOf(Math.max.apply(null, h)), maior = h[pico] || 1;
+  var cols = h.map(function(c, i){ return '<i class="a-coluna' + (i === pico ? ' pico' : '') + '" style="--d:' + (1.4 + i * .04) + 's;height:' + Math.max(2, 100 * c / maior) + '%"></i>'; }).join('');
+  var frase = pico < 5 || pico >= 22 ? 'a gente é do time da madrugada.' :
+              pico < 12 ? 'a gente é do time do bom dia.' :
+              pico < 18 ? 'a gente conversa mais de tarde.' : 'a noite é nossa.';
+  return '' +
+  forma('circulo', 82, 18, 26, '#ff4f9a', 'boia', .3) +
+  forma('estrela', 14, 12, 14, '#ffc4dc', 'gira', .6) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">a nossa hora</div>' +
+    '<div class="gigante destaque a-surgir" style="--d:.5s">' + pico + 'h</div>' +
+    '<div><div class="colunas">' + cols + '</div><div class="eixo"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span></div></div>' +
+    '<div class="medio a-subir" style="--d:2.6s">' + frase + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'recorde', precisa: 'whats', paleta: 'forte', musica: 'best-part', dur: 8.5, html: function(){
+  var extras = [];
+  if (W.audios) extras.push(fmt(W.audios) + ' áudios');
+  if (W.bomDia) extras.push(fmt(W.bomDia) + ' bons dias');
+  if (W.saudade) extras.push(fmt(W.saudade) + ' “saudade”');
+  if (W.figurinhas) extras.push(fmt(W.figurinhas) + ' figurinhas');
+  if (W.fotos) extras.push(fmt(W.fotos) + ' fotos e vídeos');
+  return '' +
+  forma('explosao', 84, 16, 36, '#ffc4dc', 'gira', .2) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">o dia recorde</div>' +
+    '<div class="gigante a-surgir" style="--d:.5s">' + ddmm(isoParaData(W.diaRecorde.data)) + '</div>' +
+    '<div class="medio a-subir" style="--d:1.3s">' + conta(W.diaRecorde.total, 1.4, 1.4) + ' mensagens num dia só.</div>' +
+    '<div class="texto a-subir" style="--d:2.4s">' + esc(W.diaRecorde.data === iso(dia(PEDIDO)) ? TEXTOS.recordePedido : TEXTOS.recordeTexto) + '</div>' +
+    '<div class="linha">' + extras.map(function(e, i){ return '<span class="pilula a-surgir" style="--d:' + (3.2 + i * .2) + 's">' + e + '</span>'; }).join('') + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'ligacao', precisa: 'whats', paleta: 'escuro', musica: 'best-part', dur: 9, html: function(){
+  var horas = W.minutosLigacao / 60, m = W.maiorLigacao;
+  var maior = '';
+  if (m && m.minutos >= 120){
+    var h = Math.floor(m.minutos / 60), min = m.minutos % 60;
+    var ini = +m.hora.slice(0, 2) * 60 + +m.hora.slice(3);
+    maior = 'a maior: ' + h + (h === 1 ? ' hora' : ' horas') + (min >= 5 ? ' e ' + min + ' min' : '') + ' de ' + (m.tipo === 'voz' ? 'ligação' : 'chamada de vídeo') +
+      ', em ' + ddmm(isoParaData(m.data)) + '. começou às ' + m.hora.replace(':', 'h') + (ini + m.minutos >= 24 * 60 ? ' e só acabou no outro dia.' : '.');
+  }
+  return '' +
+  forma('circulo', 84, 16, 30, '#ff4f9a', 'boia', .2) +
+  forma('onda', 20, 90, 40, '#ffc4dc', '', 2.6) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.2s">em ligação</div>' +
+    '<div class="medio a-subir" style="--d:.4s">a gente passou</div>' +
+    '<div class="gigante destaque a-surgir" style="--d:.8s">' + conta(horas, .9, 1.8) + '</div>' +
+    '<div class="medio a-subir" style="--d:1s">horas no telefone</div>' +
+    '<div class="texto a-subir" style="--d:2.2s">ou ' + fmt(horas / 24) + ' dias inteiros, em ' + fmt(W.ligacoes) + ' ligações.</div>' +
+    (maior ? '<div class="pilula a-subir" style="--d:3.2s">' + esc(maior) + '</div>' : '') +
+  '</div>'; } });
+
+nova({ id: 'momentos', paleta: 'claro', musica: 'all-of-me', dur: 10, html: function(){
+  var itens = MOMENTOS.map(function(m, i){
+    return '<div class="item a-subir" style="--d:' + (.7 + i * .45) + 's"><b class="pos destaque">' + (i + 1) + '</b><div><div class="tit">' + esc(m.titulo) + '</div><div class="sub">' + esc(m.sub) + '</div></div></div>';
+  }).join('');
+  return '' +
+  forma('flor', 88, 12, 30, '#ffb8d2', 'gira', .2) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.1s">os nossos</div>' +
+    '<div class="grande a-subir" style="--d:.25s">top momentos</div>' +
+    '<div class="lista" style="margin-top:8px">' + itens + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'pedido', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 10.5, html: function(){
+  var proximo;
+  if (HOJE_E_MESVERSARIO) proximo = MESES_NAMORO % 12 === 0 ?
+    'hoje faz ' + (MESES_NAMORO / 12) + (MESES_NAMORO === 12 ? ' ano!' : ' anos!') :
+    'hoje é o mesversário de ' + MESES_NAMORO + (MESES_NAMORO === 1 ? ' mês' : ' meses') + '!';
+  else if ((MESES_NAMORO + 1) % 12 === 0)
+    proximo = 'o nosso ' + ((MESES_NAMORO + 1) / 12) + 'º ano é ' + (DIAS_ATE_PROXIMO === 1 ? 'amanhã' : 'daqui a ' + DIAS_ATE_PROXIMO + ' dias');
+  else proximo = 'o ' + (MESES_NAMORO + 1) + 'º mesversário é daqui a ' + DIAS_ATE_PROXIMO + (DIAS_ATE_PROXIMO === 1 ? ' dia' : ' dias');
+  var d = 1.3;
+  var baloes = TEXTOS.pedidoConversa.map(function(b){
+    var html = '<div class="balao ' + (b[0] === 'ela' ? 'dela ' : '') + 'a-surgir" style="--d:' + d.toFixed(2) + 's">' + esc(b[1]) + '</div>';
+    d += .75;
+    return html;
+  }).join('');
+  var pt = W && W.primeiroTeAmo && W.primeiroTeAmo.data === iso(dia(PEDIDO)) ?
+    '<div class="pequeno a-aparecer" style="--d:' + (d + 2.2).toFixed(2) + 's">e às ' + W.primeiroTeAmo.hora.replace(':', 'h') + ' da mesma noite veio o primeiro “eu te amo”.</div>' : '';
+  return '' +
+  '<div class="foto-fundo">' + img('pedido') + '</div>' +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.4s">' + esc(TEXTOS.pedidoOlho) + '</div>' +
+    '<div class="grande a-subir" style="--d:.6s">o pedido</div>' +
+    '<div class="conversa">' + baloes + '</div>' +
+    '<div class="linha a-subir" style="--d:' + (d + .4).toFixed(2) + 's"><span class="pilula"><span>' + conta(DIAS_NAMORO, d + .5, 1.5) + ' dias de namoro</span></span></div>' +
+    '<div class="pequeno a-aparecer" style="--d:' + (d + 1.4).toFixed(2) + 's">' + proximo + '</div>' +
+    pt +
+  '</div>'; } });
+
+nova({ id: 'artista', precisa: 'artista', paleta: 'forte', musica: 'love-drought', dur: 9, html: function(){
+  var c = ARTISTA.capas || [];
+  return '' +
+  '<div class="conteudo">' +
+    '<div class="leque">' +
+      (c[1] ? '<img class="a-girar" style="--d:.2s;--r0:-40deg;transform:rotate(-14deg) translateX(-42%)" data-src="fotos/' + c[1] + '.jpg" alt="">' : '') +
+      (c[2] ? '<img class="a-girar" style="--d:.35s;--r0:40deg;transform:rotate(12deg) translateX(42%)" data-src="fotos/' + c[2] + '.jpg" alt="">' : '') +
+      (c[0] ? '<img class="a-surgir" style="--d:.5s" data-src="fotos/' + c[0] + '.jpg" alt="">' : '') +
+    '</div>' +
+    '<div class="olho a-subir" style="--d:1s">a artista do ano</div>' +
+    '<div class="gigante a-surgir" style="--d:1.3s">' + esc(ARTISTA.nome) + '</div>' +
+    '<div class="texto a-subir" style="--d:2.3s">' + esc(ARTISTA.texto || '') + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'musicas', precisa: 'musicas', paleta: 'escuro', musica: 'pyramids', dur: 9.5, html: function(){
+  var itens = MUSICAS.map(function(m, i){
+    return '<div class="item a-subir" style="--d:' + (.7 + i * .4) + 's"><b class="pos destaque">' + (i + 1) + '</b>' + img(m.capa, 'capa') + '<div><div class="tit">' + esc(m.titulo) + '</div><div class="sub">' + esc(m.artista) + '</div></div></div>';
+  }).join('');
+  return '' +
+  forma('onda', 80, 10, 36, '#ff4f9a', '', .4) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.1s">as nossas</div>' +
+    '<div class="grande a-subir" style="--d:.25s">top músicas</div>' +
+    '<div class="lista" style="margin-top:8px">' + itens + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'video', paleta: 'vinho', tema: 'foto', musica: 'pyramids', dur: 9, html: function(){ return '' +
+  '<div class="foto-fundo"><video data-src="videos/rede.mp4" muted loop playsinline webkit-playsinline preload="none"></video></div>' +
+  '<div class="conteudo">' +
+    '<div class="grande a-subir" style="--d:1.2s">' + esc(TEXTOS.videoTexto) + '</div>' +
+  '</div>'; },
+  entrar: function(el){ var v = el.querySelector('video'); v.muted = true; try { v.currentTime = 0; } catch (e){} var p = v.play(); if (p && p.catch) p.catch(function(){}); },
+  sair: function(el){ el.querySelector('video').pause(); } });
+
+nova({ id: 'fotos', paleta: 'claro', barras: 'foto', musica: 'pyramids', dur: 9, html: function(){
+  var cols = [[], [], []];
+  for (var i = 0; i < 18; i++) cols[i % 3].push(img('mosaico' + (i + 1)));
+  // repete pra coluna nunca acabar enquanto anda
+  var html = cols.map(function(c){ return '<div class="col">' + c.join('') + c.join('') + '</div>'; }).join('');
+  return '' +
+  '<div class="mosaico a-aparecer" style="--d:0s">' + html + '</div>' +
+  '<div class="conteudo">' +
+    '<div class="selo a-surgir" style="--d:.8s">' +
+      '<div class="gigante">' + conta(W && W.fotos ? W.fotos : TOTAL_FOTOS, .9, 1.6) + '</div>' +
+      '<div class="medio">' + (W && W.fotos ? 'fotos e vídeos no whatsapp' : 'fotos nossas') + '</div>' +
+    '</div>' +
+    '<div class="texto a-subir selo" style="--d:2.6s;padding:14px 20px;border-radius:18px">' + esc(TEXTOS.fotos) + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'motivos', paleta: 'forte', musica: 'pyramids', dur: 11.5, html: function(){ return '' +
+  forma('coracao', 82, 16, 30, '#ffc4dc', 'boia', .2) +
+  forma('coracao', 14, 86, 18, '#3b0820', 'boia', .5) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.1s">por que eu te amo</div>' +
+    '<div class="gigante a-subir" style="--d:.3s">' + MOTIVOS.length + '</div>' +
+    '<div class="medio a-subir" style="--d:.45s">motivos (só pra começar)</div>' +
+    '<div class="grande motivo a-aparecer" style="--d:1s"></div>' +
+  '</div>'; },
+  tick: function(t, el){
+    var m = el.querySelector('.motivo');
+    var k = Math.floor((t - 1.1) / .55);
+    var txt = k < 0 ? '' : (k < MOTIVOS.length ? MOTIVOS[k] : TEXTOS.motivosFim);
+    if (m.textContent !== txt){ m.textContent = txt; m.style.fontSize = txt.length > 46 ? 'min(calc(var(--u)*8.6), calc(var(--v)*4.3))' : ''; }
+  } });
+
+function personalidade(){
+  var nome = 'os inseparáveis', tracos = [];
+  if (W){
+    var h = W.horas, noite = h[22] + h[23] + h[0] + h[1] + h[2] + h[3];
+    var fracNoite = noite / Math.max(1, W.total);
+    var todoDia = W.diasFalando / Math.max(1, W.diasTotal);
+    var teAmoDia = (W.teAmo.ela + W.teAmo.ele) / Math.max(1, W.diasTotal);
+    var horasLigacao = W.minutosLigacao / 60;
+    if (horasLigacao > 300) nome = 'os que não desligam';
+    else if (fracNoite > .28) nome = 'os da madrugada';
+    else if (todoDia > .97) nome = 'os grudados';
+    if (W.maiorSequencia > 300 || todoDia > .9) tracos.push('conversam todo santo dia');
+    if (W.maiorLigacao && W.maiorLigacao.minutos >= 360) tracos.push('dormem em chamada de vídeo');
+    if (teAmoDia >= 2) tracos.push('falam te amo umas ' + Math.round(teAmoDia) + ' vezes por dia');
+    else if (teAmoDia >= 1) tracos.push('falam te amo todo dia');
+    if (fracNoite > .2) tracos.push('dormem tarde por causa um do outro');
+    if (W.audios > 200) tracos.push('mandam áudio de 5 minutos');
+    if (W.saudade > 60) tracos.push('sentem saudade 5 minutos depois de se despedir');
+  }
+  ['grudados', 'bobos um pelo outro', 'feitos um pro outro'].forEach(function(t){ if (tracos.length < 3) tracos.push(t); });
+  return { nome: nome, tracos: tracos.slice(0, 3) };
+}
+
+nova({ id: 'personalidade', paleta: 'escuro', musica: 'pyramids', dur: 9, html: function(){
+  var p = personalidade();
+  return '' +
+  '<div class="polaroid a-girar" style="--d:.1s;--r:-6deg;--r0:-30deg;right:calc(var(--u)*8);top:calc(var(--topo) + 70px);width:calc(var(--u)*44);height:calc(var(--u)*54)">' + img('personalidade') + '</div>' +
+  forma('estrela', 18, 22, 22, '#ff4f9a', 'gira', .5) +
+  '<div class="conteudo" style="margin-top:calc(var(--u)*52)">' +
+    '<div class="olho a-subir" style="--d:.6s">a personalidade do casal</div>' +
+    '<div class="medio a-subir" style="--d:.8s">a gente é</div>' +
+    '<div class="grande destaque a-surgir" style="--d:1.2s">' + esc(p.nome) + '</div>' +
+    '<div class="linha">' + p.tracos.map(function(t, i){ return '<span class="pilula a-subir" style="--d:' + (2.2 + i * .3) + 's">' + esc(t) + '</span>'; }).join('') + '</div>' +
+  '</div>'; } });
+
+function itensResumo(){
+  var it = [['dias de namoro', fmt(DIAS_NAMORO)], ['desde o primeiro oi', fmt(DIAS) + ' dias']];
+  if (W){
+    it.push(['mensagens', fmt(W.total)]);
+    it.push(['te amo', fmt(W.teAmo.ela + W.teAmo.ele)]);
+    if (W.emojis.length) it.push(['emoji', W.emojis[0][0]]);
+    if (W.minutosLigacao >= 60) it.push(['em ligação', fmt(W.minutosLigacao / 60) + 'h']);
+    it.push(['a nossa hora', W.horas.indexOf(Math.max.apply(null, W.horas)) + 'h']);
+  } else {
+    it.push(['fotos', fmt(TOTAL_FOTOS)]);
+    it.push(['motivos', MOTIVOS.length + '+']);
+  }
+  if (ARTISTA) it.push(['artista', ARTISTA.nome]);
+  if (MUSICAS.length) it.push(['música', MUSICAS[0].titulo]);
+  else if (W && W.maiorSequencia >= 30) it.push(['dias seguidos', fmt(W.maiorSequencia)]);
+  return it.slice(0, 8);
+}
+
+nova({ id: 'resumo', paleta: 'forte', musica: 'pyramids', dur: 16, html: function(){
+  var grade = itensResumo().map(function(x, i){ return '<div class="a-subir" style="--d:' + (.8 + i * .12) + 's"><div class="rot">' + esc(x[0]) + '</div><div class="val">' + esc(x[1]) + '</div></div>'; }).join('');
+  return '' +
+  '<div class="conteudo">' +
+    '<div class="cartao a-surgir" style="--d:.1s">' +
+      '<div class="foto">' + img('resumo') + '</div>' +
+      '<div class="grade">' + grade + '</div>' +
+      '<div class="assina"><span>o nosso wrapped · ' + esc(TEXTOS.aberturaDestaque || HOJE.getFullYear()) + '</span><span>' + esc(TEXTOS.assinaturaCurta) + '</span></div>' +
+    '</div>' +
+    '<div class="linha a-subir" style="--d:2s;justify-content:center"><button class="botao claro" data-acao="salvar">salvar a imagem</button></div>' +
+  '</div>'; },
+  entrar: function(){ prepararImagemResumo(); } });
+
+nova({ id: 'final', paleta: 'vinho', tema: 'foto', musica: 'especial', dur: Infinity, html: function(){ return '' +
+  '<div class="foto-fundo">' + img('final') + '</div>' +
+  '<div class="conteudo">' +
+    '<div class="medio a-subir" style="--d:.6s">' + esc(TEXTOS.finalTitulo) + '</div>' +
+    '<div class="texto a-subir" style="--d:1.6s">' + esc(TEXTOS.finalTexto) + '</div>' +
+    '<div class="grande destaque a-surgir" style="--d:2.8s">' + esc(TEXTOS.finalTeAmo) + '</div>' +
+    '<div class="pequeno a-aparecer" style="--d:3.8s">' + esc(TEXTOS.assinatura) + '</div>' +
+    '<div class="linha a-aparecer" style="--d:4.6s"><button class="botao" data-acao="denovo">ver de novo</button></div>' +
+  '</div>'; } });
+
+/* ---------- montar ---------- */
+var TEMA = { claro: 'claro', creme: 'claro', forte: 'forte', escuro: 'escuro', vinho: 'escuro' };
+HIST.forEach(function(h, i){
+  var el = document.createElement('section');
+  h.tema = h.tema || TEMA[h.paleta];
+  el.className = 'historia tema-' + h.tema;
+  el.setAttribute('data-id', h.id);
+  el.innerHTML = h.html();
+  h.el = el;
+  h.contas = Array.prototype.slice.call(el.querySelectorAll('.conta')).map(function(c){
+    return { el: c, alvo: +c.getAttribute('data-alvo'), d: +c.getAttribute('data-d'), t: +c.getAttribute('data-t'), ultimo: null };
+  });
+  historias.appendChild(el);
+  if (i > 0){ var b = document.createElement('div'); b.className = 'barra'; b.innerHTML = '<i></i>'; barras.appendChild(b); }
+});
+var BARRAS = barras.children;
+
+function carregarFotos(i){
+  var h = HIST[i];
+  if (!h || h.fotosOk) return;
+  h.fotosOk = true;
+  Array.prototype.forEach.call(h.el.querySelectorAll('img[data-src],video[data-src]'), function(im){ im.src = im.getAttribute('data-src'); });
+}
+
+/* ---------- o fundo rosa (WebGL, bem leve) ---------- */
+var PALETAS = {
+  claro:  ['#ffe1ec', '#ffb3cf', '#fff3e8', '#ff9cc4', '#ffcfb8'],
+  creme:  ['#fff4ea', '#ffd3e3', '#fffaf4', '#ffbfd5', '#ffe0cf'],
+  forte:  ['#ff3d8b', '#d6145c', '#ff80b5', '#ff9a7a', '#ff52a2'],
+  escuro: ['#2a0517', '#6e0f3d', '#3d0a22', '#a3195c', '#4a0b2a'],
+  vinho:  ['#3b0820', '#8a1446', '#250412', '#c8256a', '#5c0f33']
+};
+function rgb(h){ return [parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255]; }
+
+var fundo = (function(){
+  var canvas = document.getElementById('fundo');
+  var atual = PALETAS.forte.map(rgb), alvo = atual.map(function(c){ return c.slice(); });
+  var gl = null, prog, uT, uR, uC = [], tempo = 0, vivo = false;
+
+  function cssFundo(p){
+    palco.style.background =
+      'radial-gradient(circle at 22% 25%, ' + p[1] + ' 0, transparent 55%),' +
+      'radial-gradient(circle at 80% 35%, ' + p[2] + ' 0, transparent 50%),' +
+      'radial-gradient(circle at 35% 82%, ' + p[3] + ' 0, transparent 55%),' +
+      'radial-gradient(circle at 85% 88%, ' + p[4] + ' 0, transparent 45%),' + p[0];
+  }
+  function iniciar(){
+    try { gl = canvas.getContext('webgl', { antialias: false, depth: false, alpha: false, powerPreference: 'low-power' }); } catch (e){ gl = null; }
+    if (!gl){ palco.classList.add('sem-webgl'); return; }
+    var vs = 'attribute vec2 p; varying vec2 v; void main(){ v = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }';
+    var fs = [
+      'precision mediump float;',
+      'varying vec2 v; uniform float t; uniform vec2 res;',
+      'uniform vec3 c0; uniform vec3 c1; uniform vec3 c2; uniform vec3 c3; uniform vec3 c4;',
+      'float bolha(vec2 p, vec2 c, float r){ vec2 d = p - c; return exp(-dot(d, d) / (r * r)); }',
+      'void main(){',
+      '  float asp = res.x / res.y;',
+      '  vec2 p = vec2(v.x * asp, v.y);',
+      '  p += 0.05 * vec2(sin(p.y * 3.1 + t * 0.45), cos(p.x * 2.7 + t * 0.38));',
+      '  vec2 a = vec2(asp * (0.22 + 0.16 * sin(t * 0.21)), 0.78 + 0.10 * cos(t * 0.17));',
+      '  vec2 b = vec2(asp * (0.80 + 0.12 * cos(t * 0.19)), 0.64 + 0.14 * sin(t * 0.23));',
+      '  vec2 c = vec2(asp * (0.32 + 0.20 * cos(t * 0.13 + 1.0)), 0.18 + 0.10 * sin(t * 0.29));',
+      '  vec2 d = vec2(asp * (0.84 + 0.10 * sin(t * 0.27 + 2.0)), 0.12 + 0.10 * cos(t * 0.15));',
+      '  vec3 cor = c0;',
+      '  cor = mix(cor, c1, bolha(p, a, 0.46));',
+      '  cor = mix(cor, c2, bolha(p, b, 0.40));',
+      '  cor = mix(cor, c3, bolha(p, c, 0.44));',
+      '  cor = mix(cor, c4, 0.85 * bolha(p, d, 0.34));',
+      '  gl_FragColor = vec4(cor, 1.0);',
+      '}'
+    ].join('\n');
+    function shader(tipo, src){ var s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+    prog = gl.createProgram();
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, vs));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)){ gl = null; palco.classList.add('sem-webgl'); return; }
+    gl.useProgram(prog);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    uT = gl.getUniformLocation(prog, 't');
+    uR = gl.getUniformLocation(prog, 'res');
+    for (var i = 0; i < 5; i++) uC.push(gl.getUniformLocation(prog, 'c' + i));
+    canvas.addEventListener('webglcontextlost', function(e){ e.preventDefault(); gl = null; palco.classList.add('sem-webgl'); });
+    vivo = true;
+    tamanho();
+  }
+  function tamanho(){
+    if (!gl) return;
+    // o fundo é só gradiente: desenhar pequeno e deixar o CSS esticar sai quase de graça
+    var w = Math.max(90, Math.round(palco.clientWidth / 4)), h = Math.max(160, Math.round(palco.clientHeight / 4));
+    canvas.width = w; canvas.height = h;
+    gl.viewport(0, 0, w, h);
+  }
+  function paleta(nome){
+    var p = PALETAS[nome] || PALETAS.claro;
+    alvo = p.map(rgb);
+    cssFundo(p);
+    if (!vivo) atual = alvo.map(function(c){ return c.slice(); });
+  }
+  function desenhar(dt){
+    if (!gl) return;
+    tempo += dt;
+    var k = 1 - Math.exp(-dt * 2.6);
+    for (var i = 0; i < 5; i++){
+      for (var j = 0; j < 3; j++) atual[i][j] += (alvo[i][j] - atual[i][j]) * k;
+      gl.uniform3fv(uC[i], atual[i]);
+    }
+    gl.uniform1f(uT, tempo);
+    gl.uniform2f(uR, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  function encaixar(){ atual = alvo.map(function(c){ return c.slice(); }); }
+  return { iniciar: iniciar, tamanho: tamanho, paleta: paleta, desenhar: desenhar, encaixar: encaixar };
+})();
+
+/* ---------- música ---------- */
+if (!COM_MUSICA) document.getElementById('som').style.display = 'none';
+var audio = new Audio();
+audio.preload = 'auto';
+audio.loop = true;
+var faixa = null, mudo = false, comecou = false;
+function tocar(nome){
+  if (TESTE || !COM_MUSICA || !nome || nome === faixa) return;
+  faixa = nome;
+  audio.src = 'musicas/' + nome + '.mp3';
+  if (comecou && !mudo) { var p = audio.play(); if (p && p.catch) p.catch(function(){}); }
+}
+document.getElementById('som').addEventListener('click', function(e){
+  e.stopPropagation();
+  mudo = !mudo;
+  audio.muted = mudo;
+  palco.classList.toggle('mudo', mudo);
+  if (!mudo && comecou && audio.paused && COM_MUSICA){ var p = audio.play(); if (p && p.catch) p.catch(function(){}); }
+});
+
+/* ---------- andar entre as telas ---------- */
+var atual = -1, decorrido = 0, pausado = false;
+
+function ir(i){
+  i = clamp(i, 0, HIST.length - 1);
+  if (HIST[atual]){ HIST[atual].el.classList.remove('ativa'); if (HIST[atual].sair) HIST[atual].sair(HIST[atual].el); }
+  atual = i;
+  decorrido = 0;
+  var h = HIST[i];
+  void h.el.offsetWidth;   // reinicia as animações
+  h.el.classList.add('ativa');
+  palco.setAttribute('data-tema', h.barras || h.tema);
+  palco.classList.toggle('no-comeco', i === 0);
+  fundo.paleta(h.paleta);
+  carregarFotos(i); carregarFotos(i + 1); carregarFotos(i + 2);
+  if (comecou) tocar(h.musica);
+  for (var b = 0; b < BARRAS.length; b++){
+    BARRAS[b].className = 'barra' + (b < i - 1 ? ' feita' : (b === i - 1 ? ' agora' : ''));
+    BARRAS[b].firstChild.style.transform = b < i - 1 ? 'scaleX(1)' : 'scaleX(0)';
+  }
+  h.contas.forEach(function(c){ c.ultimo = null; });
+  if (h.entrar) h.entrar(h.el);
+  passo(0);
+}
+function proxima(){ if (atual < HIST.length - 1) ir(atual + 1); }
+function anterior(){ ir(atual > 1 ? atual - 1 : atual); }
+
+function comecar(){
+  if (comecou) return;
+  comecou = true;
+  // o iPhone só deixa tocar som se começar dentro do toque
+  var primeira = HIST[1] && HIST[1].musica;
+  if (COM_MUSICA){
+    if (primeira){ faixa = primeira; audio.src = 'musicas/' + primeira + '.mp3'; }
+    audio.muted = mudo;
+    var p = audio.play(); if (p && p.catch) p.catch(function(){});
+  }
+  ir(1);
+}
+
+function passo(dt){
+  var h = HIST[atual];
+  if (h){
+    if (!pausado) decorrido += dt;
+    if (h.tick) h.tick(decorrido, h.el);
+    for (var k = 0; k < h.contas.length; k++){
+      var c = h.contas[k];
+      var x = clamp((decorrido - c.d) / c.t, 0, 1);
+      var v = Math.round(c.alvo * (1 - Math.pow(1 - x, 3)));
+      if (v !== c.ultimo){ c.ultimo = v; c.el.textContent = fmt(v); }
+    }
+    if (atual > 0 && isFinite(h.dur)){
+      var barra = BARRAS[atual - 1];
+      if (barra) barra.firstChild.style.transform = 'scaleX(' + clamp(decorrido / h.dur, 0, 1).toFixed(4) + ')';
+      if (decorrido >= h.dur && !TESTE) proxima();
+    }
+  }
+  fundo.desenhar(dt);
+}
+
+/* toque: esquerda volta, direita passa, segurar pausa */
+var segurando = null, segurou = false, toqueX = 0;
+palco.addEventListener('pointerdown', function(e){
+  if (e.target.closest('button')) return;
+  toqueX = e.clientX;
+  segurou = false;
+  clearTimeout(segurando);
+  segurando = setTimeout(function(){ segurou = true; pausado = true; palco.classList.add('pausado'); }, 230);
+});
+function soltar(e, cancelou){
+  clearTimeout(segurando);
+  if (segurou){ segurou = false; pausado = false; palco.classList.remove('pausado'); return; }
+  if (cancelou || !comecou || e.target.closest('button')) return;
+  var r = palco.getBoundingClientRect();
+  if ((toqueX - r.left) / r.width < .3) anterior(); else proxima();
+}
+palco.addEventListener('pointerup', function(e){ soltar(e, false); });
+palco.addEventListener('pointercancel', function(e){ soltar(e, true); });
+// o primeiro toque é um "click" de verdade, que é o que o iPhone aceita pra liberar o som
+palco.addEventListener('click', function(e){
+  var botao = e.target.closest('button[data-acao]');
+  var acao = botao ? botao.getAttribute('data-acao') : null;
+  if (!comecou){ comecar(); return; }
+  if (acao === 'denovo') ir(1);
+  if (acao === 'salvar') salvarResumo(botao);
+});
+document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
+document.addEventListener('keydown', function(e){
+  if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); if (!comecou) comecar(); else proxima(); }
+  if (e.key === 'ArrowLeft' && comecou) anterior();
+});
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden){ pausado = true; if (comecou) audio.pause(); }
+  else { pausado = false; palco.classList.remove('pausado'); if (comecou && !mudo && COM_MUSICA){ var p = audio.play(); if (p && p.catch) p.catch(function(){}); } }
+});
+
+/* ---------- o resumo vira imagem pra salvar ---------- */
+var arquivoResumo = null;
+function carregarImagem(src){
+  return new Promise(function(ok, erro){ var im = new Image(); im.onload = function(){ ok(im); }; im.onerror = erro; im.src = src; });
+}
+function prepararImagemResumo(){
+  if (arquivoResumo) return;
+  var pronto = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  pronto.then(function(){ return carregarImagem('fotos/resumo.jpg'); }).then(function(foto){
+    var c = document.createElement('canvas'); c.width = 1080; c.height = 1920;
+    var g = c.getContext('2d');
+    var gr = g.createLinearGradient(0, 0, 1080, 1920);
+    gr.addColorStop(0, '#ff3d8b'); gr.addColorStop(.55, '#ff80b5'); gr.addColorStop(1, '#ffb59e');
+    g.fillStyle = gr; g.fillRect(0, 0, 1080, 1920);
+    // cartão creme
+    function arredondado(x, y, w, h, r){ g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+    g.fillStyle = '#fff6ee'; arredondado(70, 120, 940, 1680, 56); g.fill();
+    // foto
+    g.save(); arredondado(110, 160, 860, 780, 40); g.clip();
+    var escala = Math.max(860 / foto.width, 780 / foto.height), fw = foto.width * escala, fh = foto.height * escala;
+    g.drawImage(foto, 110 + (860 - fw) / 2, 160 + (780 - fh) / 2, fw, fh);
+    g.restore();
+    var fonte = '"Bricolage Grotesque", system-ui, sans-serif';
+    var itens = itensResumo();
+    g.fillStyle = '#3b0820';
+    itens.forEach(function(x, i){
+      var cx = 120 + (i % 2) * 440, cy = 1020 + Math.floor(i / 2) * 165;
+      g.globalAlpha = .6; g.font = '700 30px ' + fonte; g.fillText(x[0].toUpperCase(), cx, cy);
+      g.globalAlpha = 1; g.font = '800 68px ' + fonte; g.fillText(x[1], cx, cy + 72);
+    });
+    g.globalAlpha = .7; g.font = '700 34px ' + fonte;
+    g.fillText('o nosso wrapped · ' + (TEXTOS.aberturaDestaque || HOJE.getFullYear()), 120, 1730);
+    g.textAlign = 'right'; g.fillText(TEXTOS.abertura, 960, 1730);
+    c.toBlob(function(blob){ if (blob) arquivoResumo = new File([blob], 'nosso-wrapped.png', { type: 'image/png' }); }, 'image/png');
+  }).catch(function(){});
+}
+function salvarResumo(botao){
+  if (!arquivoResumo){ prepararImagemResumo(); botao.textContent = 'preparando...'; setTimeout(function(){ botao.textContent = 'salvar a imagem'; }, 1500); return; }
+  // o compartilhar do iPhone precisa ser chamado direto no toque, por isso a imagem já fica pronta antes
+  if (navigator.canShare && navigator.canShare({ files: [arquivoResumo] })){
+    navigator.share({ files: [arquivoResumo], title: 'o nosso wrapped' }).catch(function(){});
+  } else {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(arquivoResumo);
+    a.download = 'nosso-wrapped.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+
+/* ---------- tamanho ---------- */
+function medir(){
+  palco.style.setProperty('--u', (palco.clientWidth / 100) + 'px');
+  palco.style.setProperty('--v', (palco.clientHeight / 100) + 'px');
+  fundo.tamanho();
+}
+window.addEventListener('resize', medir);
+medir();
+fundo.iniciar();
+
+/* ---------- começar ---------- */
+if (TESTE){
+  // modo de teste: nada anda sozinho. ?teste=1&historia=pedido&t=3 (sem t, mostra o final de tudo)
+  var alvo = P.get('historia');
+  var idx = alvo === null ? 0 : (isNaN(+alvo) ? HIST.findIndex(function(h){ return h.id === alvo; }) : +alvo);
+  idx = Math.max(0, idx);
+  var tParam = P.get('t');
+  if (tParam === null) palco.classList.add('parado');
+  if (idx > 0) comecou = true;
+  ir(idx);
+  fundo.encaixar();
+  decorrido = tParam === null ? (isFinite(HIST[idx].dur) ? HIST[idx].dur - .01 : 30) : +tParam;
+  passo(0);
+  window.__wrapped = { quadro: function(dt){ passo(dt || 1 / 60); }, ir: ir, ids: HIST.map(function(h){ return h.id; }) };
+} else {
+  ir(0);
+  var ultimo = performance.now();
+  (function laco(agora){
+    var dt = Math.min(.1, (agora - ultimo) / 1000);
+    ultimo = agora;
+    passo(dt);
+    requestAnimationFrame(laco);
+  })(ultimo);
+}
+</script>
+</body>
+</html>
