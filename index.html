@@ -223,7 +223,8 @@ button{font-family:inherit;color:inherit;cursor:pointer}
    ===================================================================== */
 var COMECO = [2025, 9, 17];   // a primeira mensagem no whatsapp (ano, mês, dia)
 var BEIJO = [2025, 10, 8];    // o primeiro beijo
-var PEDIDO = [2025, 10, 12];  // o dia em que começaram a namorar (eles comemoram todo dia 12)
+var NAMORO = [2025, 10, 12];  // o "quer ser?" por mensagem: daqui contam os mesversários (todo dia 12)
+var PEDIDO = [2025, 11, 29];  // o pedido de namoro oficial
 var TOTAL_FOTOS = 26;         // só aparece se não tiver os números do whatsapp
 
 // as músicas: quando o Romário mandar os arquivos, coloque em musicas/ e mude pra true
@@ -238,7 +239,7 @@ var TEXTOS = {
   primeiraOlho: '17/09/2025 · no whatsapp',
   primeiraAntes: 'a primeira mensagem foi sua.\ne era sobre pastel:',
   primeiraEla: ['Oiiii', 'Qual o nome da loja do pastel??'],
-  primeiraEle: ['Q’Sabor'],
+  primeiraEle: ['É logo ali na estação', 'Pera esqueci o nome', 'Q’Sabor'],
   primeiraDepois: 'e olha onde a gente foi parar.',
   beijoTitulo: 'o primeiro beijo',
   beijoTexto: 'ainda lembro do nosso primeiro beijo\ne de como aquele momento mudou tudo.',
@@ -246,10 +247,14 @@ var TEXTOS = {
   quemElaGanhou: 'você ganhou. mas eu vou virar.',
   quemEuGanhei: 'eu ganhei. mas quem puxa assunto primeiro é você.',
   recordeTexto: 'eu não lembro o assunto, mas lembro que era você.',
-  recordePedido: 'o dia do pedido. eu não lembro de tudo que a gente falou, mas lembro do “então eu sou”.',
-  pedidoOlho: '12/10/2025 · 22h48',
-  // a conversa do pedido: quem fala ('ela' ou 'ele') e o que falou
-  pedidoConversa: [['ela', 'Quer ser?'], ['ele', 'Vc é minha namorada?'], ['ela', 'Então eu sou']],
+  recordeNamoro: 'o dia do “quer ser?”. eu não lembro de tudo que a gente falou, mas lembro do “então eu sou”.',
+  namoroOlho: '12/10/2025 · 22h48 · no whatsapp',
+  namoroTitulo: 'a gente namora',
+  // a conversa daquela noite: quem fala ('ela' ou 'ele') e o que falou
+  namoroConversa: [['ela', 'Quer ser?'], ['ele', 'Vc é minha namorada?'], ['ela', 'Então eu sou']],
+  pedidoTitulo: 'o pedido',
+  pedidoTexto: 'e o nosso namoro se tornou uma das partes mais bonitas da minha vida.',
+  pedidoPilula: 'agora com aliança e tudo',
   videoTexto: 'e tem coisa que foto nenhuma guarda.',
   fotos: 'e cada uma delas virou lembrança.',
   motivosFim: 'e mais uns mil que não cabem aqui.',
@@ -263,10 +268,10 @@ var TEXTOS = {
 // os top momentos (o primeiro é o número 1)
 var MOMENTOS = [
   { titulo: 'o primeiro beijo',        sub: '08/10/2025 · e tudo mudou' },
-  { titulo: 'o pedido',                sub: '12/10/2025 · “quer ser?” “então eu sou”' },
+  { titulo: 'o pedido',                sub: '29/11/2025 · com aliança e tudo' },
+  { titulo: 'o “quer ser?”',           sub: '12/10/2025 · “então eu sou”' },
   { titulo: 'você e a minha família',  sub: '14/11/2025 · “eu adorei conhecer tua família”' },
-  { titulo: 'o buquê',                 sub: '06/03/2026 · “eu amei o buque”' },
-  { titulo: 'a ligação de 13 horas',   sub: '22/07/2026 · e ninguém desligou' }
+  { titulo: 'o buquê',                 sub: '06/03/2026 · “eu amei o buque”' }
 ];
 
 // as top músicas: quando ele mandar, preencha (capa = foto em fotos/, sem o .jpg)
@@ -319,15 +324,15 @@ var HOJE = (function(){
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 })();
 var DIAS = Math.round((HOJE - dia(COMECO)) / 864e5);
-var DIAS_NAMORO = Math.round((HOJE - dia(PEDIDO)) / 864e5);
+var DIAS_NAMORO = Math.round((HOJE - dia(NAMORO)) / 864e5);
 var MESES_NAMORO = (function(){
   var m = 0;
-  while (new Date(PEDIDO[0], PEDIDO[1] - 1 + m + 1, PEDIDO[2]) <= HOJE) m++;
+  while (new Date(NAMORO[0], NAMORO[1] - 1 + m + 1, NAMORO[2]) <= HOJE) m++;
   return m;
 })();
-var PROXIMO_MES = new Date(PEDIDO[0], PEDIDO[1] - 1 + MESES_NAMORO + 1, PEDIDO[2]);
+var PROXIMO_MES = new Date(NAMORO[0], NAMORO[1] - 1 + MESES_NAMORO + 1, NAMORO[2]);
 var DIAS_ATE_PROXIMO = Math.round((PROXIMO_MES - HOJE) / 864e5);
-var HOJE_E_MESVERSARIO = HOJE.getDate() === PEDIDO[2] && MESES_NAMORO > 0;
+var HOJE_E_MESVERSARIO = HOJE.getDate() === NAMORO[2] && MESES_NAMORO > 0;
 
 /* ---------- formas de enfeite ---------- */
 function estrela(pontas, dentro){
@@ -412,6 +417,42 @@ nova({ id: 'beijo', paleta: 'forte', musica: 'best-part', dur: 8, html: function
     '<div class="pilula a-subir" style="--d:2.8s">' + esc(TEXTOS.beijoDepois) + '</div>' +
   '</div>'; } });
 
+nova({ id: 'namoro', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 10.5, html: function(){
+  var proximo;
+  if (HOJE_E_MESVERSARIO) proximo = MESES_NAMORO % 12 === 0 ?
+    'hoje faz ' + (MESES_NAMORO / 12) + (MESES_NAMORO === 12 ? ' ano!' : ' anos!') :
+    'hoje é o mesversário de ' + MESES_NAMORO + (MESES_NAMORO === 1 ? ' mês' : ' meses') + '!';
+  else if ((MESES_NAMORO + 1) % 12 === 0)
+    proximo = 'o nosso ' + ((MESES_NAMORO + 1) / 12) + 'º ano é ' + (DIAS_ATE_PROXIMO === 1 ? 'amanhã' : 'daqui a ' + DIAS_ATE_PROXIMO + ' dias');
+  else proximo = 'o ' + (MESES_NAMORO + 1) + 'º mesversário é daqui a ' + DIAS_ATE_PROXIMO + (DIAS_ATE_PROXIMO === 1 ? ' dia' : ' dias');
+  var d = 1.3;
+  var baloes = TEXTOS.namoroConversa.map(function(b){
+    var html = '<div class="balao ' + (b[0] === 'ela' ? 'dela ' : '') + 'a-surgir" style="--d:' + d.toFixed(2) + 's">' + esc(b[1]) + '</div>';
+    d += .75;
+    return html;
+  }).join('');
+  var pt = W && W.primeiroTeAmo && W.primeiroTeAmo.data === iso(dia(NAMORO)) ?
+    '<div class="pequeno a-aparecer" style="--d:' + (d + 2.2).toFixed(2) + 's">e às ' + W.primeiroTeAmo.hora.replace(':', 'h') + ' da mesma noite veio o primeiro “eu te amo”.</div>' : '';
+  return '' +
+  '<div class="foto-fundo">' + img('namoro') + '</div>' +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.4s">' + esc(TEXTOS.namoroOlho) + '</div>' +
+    '<div class="grande a-subir" style="--d:.6s">' + esc(TEXTOS.namoroTitulo) + '</div>' +
+    '<div class="conversa">' + baloes + '</div>' +
+    '<div class="linha a-subir" style="--d:' + (d + .4).toFixed(2) + 's"><span class="pilula"><span>' + conta(DIAS_NAMORO, d + .5, 1.5) + ' dias de namoro</span></span></div>' +
+    '<div class="pequeno a-aparecer" style="--d:' + (d + 1.4).toFixed(2) + 's">' + proximo + '</div>' +
+    pt +
+  '</div>'; } });
+
+nova({ id: 'pedido', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 8.5, html: function(){ return '' +
+  '<div class="foto-fundo">' + img('pedido') + '</div>' +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.4s">' + ddmm(dia(PEDIDO)) + '/' + PEDIDO[0] + '</div>' +
+    '<div class="gigante a-subir" style="--d:.6s">' + esc(TEXTOS.pedidoTitulo) + '</div>' +
+    '<div class="texto a-subir" style="--d:1.6s">' + esc(TEXTOS.pedidoTexto) + '</div>' +
+    '<div class="linha a-subir" style="--d:2.6s"><span class="pilula">' + esc(TEXTOS.pedidoPilula) + '</span></div>' +
+  '</div>'; } });
+
 /* --- as do WhatsApp (só aparecem com o dados-whatsapp.js) --- */
 // os dias seguidos conversando (e se começaram logo depois do primeiro beijo)
 function seguidos(){
@@ -465,7 +506,7 @@ nova({ id: 'teamo', precisa: 'whats', paleta: 'vinho', musica: 'best-part', dur:
   var t = W.teAmo, total = t.ela + t.ele;
   var pt = W.primeiroTeAmo;
   var primeiro = pt ? 'o primeiro foi em ' + ddmm(isoParaData(pt.data)) + '/' + pt.data.slice(0, 4) + ', às ' + pt.hora.replace(':', 'h') +
-    (pt.data === iso(dia(PEDIDO)) ? ', na noite do pedido. ' : '. ') + (pt.quem === 'ele' ? 'e fui eu que falei primeiro.' : 'e foi você que falou primeiro.') : 'e ainda acho pouco.';
+    (pt.data === iso(dia(NAMORO)) ? ', na noite do “quer ser?”. ' : '. ') + (pt.quem === 'ele' ? 'e fui eu que falei primeiro.' : 'e foi você que falou primeiro.') : 'e ainda acho pouco.';
   return '' +
   forma('coracao', 80, 20, 40, '#ff4f9a', 'boia', .3) +
   forma('coracao', 16, 84, 24, '#ffc4dc', 'boia', .7) +
@@ -521,7 +562,7 @@ nova({ id: 'recorde', precisa: 'whats', paleta: 'forte', musica: 'best-part', du
     '<div class="olho a-subir" style="--d:.2s">o dia recorde</div>' +
     '<div class="gigante a-surgir" style="--d:.5s">' + ddmm(isoParaData(W.diaRecorde.data)) + '</div>' +
     '<div class="medio a-subir" style="--d:1.3s">' + conta(W.diaRecorde.total, 1.4, 1.4) + ' mensagens num dia só.</div>' +
-    '<div class="texto a-subir" style="--d:2.4s">' + esc(W.diaRecorde.data === iso(dia(PEDIDO)) ? TEXTOS.recordePedido : TEXTOS.recordeTexto) + '</div>' +
+    '<div class="texto a-subir" style="--d:2.4s">' + esc(W.diaRecorde.data === iso(dia(NAMORO)) ? TEXTOS.recordeNamoro : TEXTOS.recordeTexto) + '</div>' +
     '<div class="linha">' + extras.map(function(e, i){ return '<span class="pilula a-surgir" style="--d:' + (3.2 + i * .2) + 's">' + e + '</span>'; }).join('') + '</div>' +
   '</div>'; } });
 
@@ -556,33 +597,6 @@ nova({ id: 'momentos', paleta: 'claro', musica: 'all-of-me', dur: 10, html: func
     '<div class="olho a-subir" style="--d:.1s">os nossos</div>' +
     '<div class="grande a-subir" style="--d:.25s">top momentos</div>' +
     '<div class="lista" style="margin-top:8px">' + itens + '</div>' +
-  '</div>'; } });
-
-nova({ id: 'pedido', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 10.5, html: function(){
-  var proximo;
-  if (HOJE_E_MESVERSARIO) proximo = MESES_NAMORO % 12 === 0 ?
-    'hoje faz ' + (MESES_NAMORO / 12) + (MESES_NAMORO === 12 ? ' ano!' : ' anos!') :
-    'hoje é o mesversário de ' + MESES_NAMORO + (MESES_NAMORO === 1 ? ' mês' : ' meses') + '!';
-  else if ((MESES_NAMORO + 1) % 12 === 0)
-    proximo = 'o nosso ' + ((MESES_NAMORO + 1) / 12) + 'º ano é ' + (DIAS_ATE_PROXIMO === 1 ? 'amanhã' : 'daqui a ' + DIAS_ATE_PROXIMO + ' dias');
-  else proximo = 'o ' + (MESES_NAMORO + 1) + 'º mesversário é daqui a ' + DIAS_ATE_PROXIMO + (DIAS_ATE_PROXIMO === 1 ? ' dia' : ' dias');
-  var d = 1.3;
-  var baloes = TEXTOS.pedidoConversa.map(function(b){
-    var html = '<div class="balao ' + (b[0] === 'ela' ? 'dela ' : '') + 'a-surgir" style="--d:' + d.toFixed(2) + 's">' + esc(b[1]) + '</div>';
-    d += .75;
-    return html;
-  }).join('');
-  var pt = W && W.primeiroTeAmo && W.primeiroTeAmo.data === iso(dia(PEDIDO)) ?
-    '<div class="pequeno a-aparecer" style="--d:' + (d + 2.2).toFixed(2) + 's">e às ' + W.primeiroTeAmo.hora.replace(':', 'h') + ' da mesma noite veio o primeiro “eu te amo”.</div>' : '';
-  return '' +
-  '<div class="foto-fundo">' + img('pedido') + '</div>' +
-  '<div class="conteudo">' +
-    '<div class="olho a-subir" style="--d:.4s">' + esc(TEXTOS.pedidoOlho) + '</div>' +
-    '<div class="grande a-subir" style="--d:.6s">o pedido</div>' +
-    '<div class="conversa">' + baloes + '</div>' +
-    '<div class="linha a-subir" style="--d:' + (d + .4).toFixed(2) + 's"><span class="pilula"><span>' + conta(DIAS_NAMORO, d + .5, 1.5) + ' dias de namoro</span></span></div>' +
-    '<div class="pequeno a-aparecer" style="--d:' + (d + 1.4).toFixed(2) + 's">' + proximo + '</div>' +
-    pt +
   '</div>'; } });
 
 nova({ id: 'artista', precisa: 'artista', paleta: 'forte', musica: 'love-drought', dur: 9, html: function(){

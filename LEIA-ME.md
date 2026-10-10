@@ -3,13 +3,15 @@
 O "Wrapped" do primeiro ano de namoro do Romário e da Julia, igual ao do Spotify: telas em
 pé que passam sozinhas, com números grandes e fotos. É o Romário falando com a Julia.
 
-Os números saíram da conversa deles no WhatsApp. As datas também, e estão confirmadas na
-conversa:
+Os números saíram da conversa deles no WhatsApp. As datas foram confirmadas pelo Romário e
+pela conversa:
 
 - **17/09/2025, 12h23:** a primeira mensagem, dela: "Qual o nome da loja do pastel??".
 - **08/10/2025:** o primeiro beijo.
-- **12/10/2025, 22h48:** o namoro ("Quer ser?" / "Vc é minha namorada?" / "Então eu sou").
+- **12/10/2025, 22h48:** o "quer ser?" por mensagem ("Quer ser?" / "Vc é minha namorada?" /
+  "Então eu sou"). É daqui que eles contam os mesversários (todo dia 12) e o 1 ano.
 - **12/10/2025, 23h31:** o primeiro "te amo", na mesma noite.
+- **29/11/2025:** o pedido de namoro oficial (com aliança).
 
 ## As telas, em ordem
 
@@ -17,24 +19,25 @@ conversa:
 2. **O começo:** 17/09 e quantos dias se passaram (conta sozinho pela data do aparelho).
 3. **A primeira mensagem:** os balões do pastel.
 4. **O primeiro beijo.**
-5. **WhatsApp:**
+5. **"A gente namora" (12/10):** a conversa em balões, os dias de namoro e quanto falta pro
+   1 ano. No dia 12/10 aparece "hoje faz 1 ano!".
+6. **O pedido (29/11),** com a foto do buquê.
+7. **WhatsApp:**
    - as mensagens, com um gráfico por mês;
    - quem manda mais;
    - os "te amo" e o primeiro deles;
    - o emoji do ano;
    - a hora em que eles mais conversam;
-   - o dia recorde (que é o dia do pedido);
+   - o dia recorde (que é o dia do "quer ser?");
    - as horas de ligação, com a maior delas.
-6. **Top momentos.**
-7. **O pedido:** a conversa em balões, os dias de namoro e quanto falta pro 1 ano. No dia
-   12/10 aparece "hoje faz 1 ano!".
-8. **A artista e as top músicas:** só aparecem quando preencher `MUSICAS` e `ARTISTA`.
-9. **Um vídeo deles,** em tela cheia.
-10. **O mosaico de fotos,** com as fotos e vídeos que eles trocaram.
-11. **Os motivos.**
-12. **A personalidade do casal.**
-13. **O resumo,** que dá pra salvar como imagem.
-14. **O final.**
+8. **Top momentos.**
+9. **A artista e as top músicas:** só aparecem quando preencher `MUSICAS` e `ARTISTA`.
+10. **Um vídeo deles,** em tela cheia.
+11. **O mosaico de fotos,** com as fotos e vídeos que eles trocaram.
+12. **Os motivos.**
+13. **A personalidade do casal.**
+14. **O resumo,** que dá pra salvar como imagem.
+15. **O final.**
 
 Ela toca na direita pra passar, na esquerda pra voltar, e segura pra pausar.
 
@@ -54,7 +57,7 @@ Ela toca na direita pra passar, na esquerda pra voltar, e segura pra pausar.
 
 Tudo fica no começo do `<script>` do `index.html`:
 
-- `COMECO`, `BEIJO` e `PEDIDO`: as datas.
+- `COMECO`, `BEIJO`, `NAMORO` e `PEDIDO`: as datas.
 - `TEXTOS`: todos os textos, incluindo os balões da primeira mensagem e do pedido.
 - `MOMENTOS`: os top momentos. O primeiro da lista é o número 1.
 - `MUSICAS`, `ARTISTA` e `COM_MUSICA`: as músicas.

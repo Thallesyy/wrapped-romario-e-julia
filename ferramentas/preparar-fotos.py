@@ -16,7 +16,8 @@ DESTINO = os.path.join(SITE, 'fotos')
 
 # fotos grandes: nome no site -> foto original
 GRANDES = {
-    'pedido': 'foto01',         # os dois de rosto colado, os rostos ficam no alto
+    'namoro': 'foto01',         # os dois de rosto colado, os rostos ficam no alto
+    'pedido': 'foto26',         # o beijo atrás do buquê (a foto do fundo da conversa deles)
     'mensagens': 'foto09',      # espelho com o celular
     'personalidade': 'foto15',  # caretas de mão dada
     'resumo': 'foto06',         # beijo no rosto, de noite
@@ -26,7 +27,7 @@ GRANDES = {
 # o mosaico da tela "fotos" (18)
 MOSAICO = [
     'foto02', 'foto03', 'foto04', 'foto05', 'foto07', 'foto11', 'foto12', 'foto13', 'foto14',
-    'foto16', 'foto18', 'foto19', 'foto20', 'foto22', 'foto23', 'foto24', 'foto25', 'foto26',
+    'foto16', 'foto18', 'foto19', 'foto20', 'foto22', 'foto23', 'foto24', 'foto25', 'foto08',
 ]
 
 
