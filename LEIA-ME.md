@@ -69,7 +69,7 @@ No iPhone o som só começa depois do toque em "começar". O botão no canto de 
 Tudo fica no começo do `<script>` do `index.html`:
 
 - `COMECO`, `BEIJO`, `QUER_SER` e `PEDIDO`: as datas.
-- `TEXTOS`: todos os textos, incluindo os balões da primeira mensagem e do pedido.
+- `TEXTOS`: todos os textos, incluindo os balões da primeira mensagem.
 - `MOMENTOS`: os top momentos. O primeiro da lista é o número 1.
 - `MUSICAS`, `ARTISTA` e `COM_MUSICA`: as músicas (as capas são fotos deles, em `preparar-fotos.py`).
 - `MOTIVOS`: os 10 motivos dele.
