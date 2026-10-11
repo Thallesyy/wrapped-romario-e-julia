@@ -16,7 +16,6 @@ DESTINO = os.path.join(SITE, 'fotos')
 
 # fotos grandes: nome no site -> foto original
 GRANDES = {
-    'namoro': 'foto01',         # os dois de rosto colado, os rostos ficam no alto
     'pedido': 'foto26',         # o beijo atrás do buquê (a foto do fundo da conversa deles)
     'mensagens': 'foto09',      # espelho com o celular
     'personalidade': 'foto15',  # caretas de mão dada

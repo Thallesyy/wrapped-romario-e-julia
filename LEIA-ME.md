@@ -8,10 +8,10 @@ pela conversa:
 
 - **17/09/2025, 12h23:** a primeira mensagem, dela: "Qual o nome da loja do pastel??".
 - **08/10/2025:** o primeiro beijo.
-- **12/10/2025, 22h48:** o "quer ser?" por mensagem ("Quer ser?" / "Vc é minha namorada?" /
-  "Então eu sou"). É daqui que eles contam os mesversários (todo dia 12) e o 1 ano.
-- **12/10/2025, 23h31:** o primeiro "te amo", na mesma noite.
-- **29/11/2025:** o pedido de namoro oficial, uma surpresa no campestre.
+- **12/10/2025, 22h48:** o "quer ser?" por mensagem. Nessa noite veio o primeiro "te amo"
+  (23h31), e é o dia recorde de mensagens.
+- **29/11/2025:** o pedido de namoro, uma surpresa no campestre. **Os dias de namoro e os
+  mesversários contam daqui.**
 
 ## As telas, em ordem
 
@@ -19,10 +19,9 @@ pela conversa:
 2. **O começo:** 17/09 e quantos dias se passaram (conta sozinho pela data do aparelho).
 3. **A primeira mensagem:** os balões do pastel.
 4. **O primeiro beijo.**
-5. **"A gente namora" (12/10):** a conversa em balões, os dias de namoro e quanto falta pro
-   1 ano. No dia 12/10 aparece "hoje faz 1 ano!".
-6. **O pedido (29/11), no campestre,** com a foto do buquê.
-7. **WhatsApp:**
+5. **O pedido (29/11), no campestre:** a foto do buquê, os dias de namoro e quanto falta pro
+   próximo mesversário. No dia 29/11/2026 aparece "hoje faz 1 ano!".
+6. **WhatsApp:**
    - as mensagens, com um gráfico por mês;
    - quem manda mais;
    - os "te amo" e o primeiro deles;
@@ -30,16 +29,16 @@ pela conversa:
    - a hora em que eles mais conversam;
    - o dia recorde (que é o dia do "quer ser?");
    - as horas de ligação, com a maior delas.
-8. **Top momentos:** os 5 que o Romário escolheu. Ele mandou do 5 pro 1, igual às músicas, então o nº 1
+7. **Top momentos:** os 5 que o Romário escolheu. Ele mandou do 5 pro 1, igual às músicas, então o nº 1
    é o 28/09, "o dia em que eu te olhei".
-9. **Um vídeo deles,** em tela cheia.
-10. **O mosaico de fotos,** com as fotos e vídeos que eles trocaram.
-11. **Top músicas,** com fotos deles de capa. A tela da artista só aparece se preencher
+8. **Um vídeo deles,** em tela cheia.
+9. **O mosaico de fotos,** com as fotos e vídeos que eles trocaram.
+10. **Top músicas,** com fotos deles de capa. A tela da artista só aparece se preencher
     `ARTISTA` (nenhum artista se repete nas 5).
-12. **Os 10 motivos dele,** um de cada vez.
-13. **A personalidade do casal.**
-14. **O resumo,** que dá pra salvar como imagem.
-15. **O final.**
+11. **Os 10 motivos dele,** um de cada vez.
+12. **A personalidade do casal.**
+13. **O resumo,** que dá pra salvar como imagem.
+14. **O final.**
 
 Ela toca na direita pra passar, na esquerda pra voltar, e segura pra pausar.
 
@@ -49,7 +48,7 @@ Cada parte toca uma das 5 músicas deles. As músicas foram cortadas no trecho m
 não pesar no celular:
 
 - o começo, a primeira mensagem e o beijo: **Foi Assim**;
-- o namoro e o pedido: **Lei da Física**;
+- o pedido: **Lei da Física**;
 - as telas do WhatsApp: **Te Amo Disgraça**;
 - os momentos, o vídeo e as fotos: **Legendary Lovers**;
 - do top músicas até o final: **Best Part**, que é a nº 1.
@@ -69,7 +68,7 @@ No iPhone o som só começa depois do toque em "começar". O botão no canto de 
 
 Tudo fica no começo do `<script>` do `index.html`:
 
-- `COMECO`, `BEIJO`, `NAMORO` e `PEDIDO`: as datas.
+- `COMECO`, `BEIJO`, `QUER_SER` e `PEDIDO`: as datas.
 - `TEXTOS`: todos os textos, incluindo os balões da primeira mensagem e do pedido.
 - `MOMENTOS`: os top momentos. O primeiro da lista é o número 1.
 - `MUSICAS`, `ARTISTA` e `COM_MUSICA`: as músicas (as capas são fotos deles, em `preparar-fotos.py`).
