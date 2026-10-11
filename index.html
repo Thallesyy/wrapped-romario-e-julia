@@ -233,6 +233,7 @@ var COM_MUSICA = true;
 var TEXTOS = {
   abertura: 'Julia & Romário',
   aberturaDestaque: '1 ano',
+  aberturaSub: 'desde o nosso primeiro beijo',
   comeco: 'tudo começou em',
   comecoDepois: 'desde então, foram',
   comecoFim: 'e eu lembro de muitas delas.',
@@ -255,7 +256,7 @@ var TEXTOS = {
   videoTexto: 'e tem coisa que foto nenhuma guarda.',
   fotos: 'e cada uma delas virou lembrança.',
   motivosFim: 'e mais uns mil que não cabem aqui.',
-  finalTitulo: 'feliz 1 ano, meu amor.',
+  finalTitulo: 'faz 1 ano desde o nosso primeiro beijo, meu amor.',
   finalTexto: 'que a nossa história continue crescendo como uma flor bem cuidada, e que nunca falte carinho pra fazer ela florescer.',
   finalTeAmo: 'eu te amo, Julia.',
   assinatura: 'com amor, Romário',
@@ -321,6 +322,12 @@ var HOJE = (function(){
 })();
 var DIAS = Math.round((HOJE - dia(COMECO)) / 864e5);
 var DIAS_NAMORO = Math.round((HOJE - dia(PEDIDO)) / 864e5);
+// quantos anos fechados desde o primeiro beijo (pela data do aparelho)
+var ANOS_BEIJO = (function(){
+  var a = HOJE.getFullYear() - BEIJO[0];
+  if (HOJE < new Date(HOJE.getFullYear(), BEIJO[1] - 1, BEIJO[2])) a--;
+  return Math.max(0, a);
+})();
 var MESES_NAMORO = (function(){
   var m = 0;
   while (new Date(PEDIDO[0], PEDIDO[1] - 1 + m + 1, PEDIDO[2]) <= HOJE) m++;
@@ -372,6 +379,7 @@ nova({ id: 'abertura', paleta: 'forte', dur: Infinity, html: function(){ return 
     '<div class="olho a-subir" style="--d:.1s">' + esc(TEXTOS.abertura) + '</div>' +
     '<div class="gigante a-subir" style="--d:.25s;font-size:min(calc(var(--u)*23.5), calc(var(--v)*12))">o nosso<br>wrapped</div>' +
     '<div class="grande a-subir destaque" style="--d:.45s">' + esc(TEXTOS.aberturaDestaque || HOJE.getFullYear()) + '</div>' +
+    (TEXTOS.aberturaSub ? '<div class="medio a-subir" style="--d:.6s">' + esc(TEXTOS.aberturaSub) + '</div>' : '') +
     '<button class="botao a-surgir" style="--d:.8s" data-acao="comecar">começar <span aria-hidden="true">▶</span></button>' +
     '<div class="pequeno a-aparecer" style="--d:1.2s">' + (COM_MUSICA ? 'liga o som · ' : '') + 'toca pra passar · segura pra pausar</div>' +
   '</div>'; } });
@@ -411,6 +419,7 @@ nova({ id: 'beijo', paleta: 'forte', musica: 'foi-assim', dur: 8, html: function
     '<div class="gigante a-subir" style="--d:.4s">' + esc(TEXTOS.beijoTitulo) + '</div>' +
     '<div class="texto a-subir" style="--d:1.4s">' + esc(TEXTOS.beijoTexto) + '</div>' +
     '<div class="pilula a-subir" style="--d:2.8s">' + esc(TEXTOS.beijoDepois) + '</div>' +
+    (ANOS_BEIJO >= 1 ? '<div class="medio a-subir" style="--d:3.8s">e hoje já faz ' + ANOS_BEIJO + (ANOS_BEIJO === 1 ? ' ano.' : ' anos.') + '</div>' : '') +
   '</div>'; } });
 
 nova({ id: 'pedido', paleta: 'vinho', tema: 'foto', musica: 'lei-da-fisica', dur: 10, html: function(){
