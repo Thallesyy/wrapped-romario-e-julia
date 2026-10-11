@@ -6,7 +6,7 @@ Os trechos usados no site (escolhidos pela parte mais forte de cada música):
     foi-assim         24 -> 86
     lei-da-fisica     41 -> 96
     te-amo-disgraca   19 -> 99
-    legendary-lovers  19 -> 80
+    legendary-lovers  34.4 -> 126 (começa no refrão)
 """
 import sys
 
