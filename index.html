@@ -227,8 +227,8 @@ var NAMORO = [2025, 10, 12];  // o "quer ser?" por mensagem: daqui contam os mes
 var PEDIDO = [2025, 11, 29];  // o pedido de namoro oficial
 var TOTAL_FOTOS = 26;         // só aparece se não tiver os números do whatsapp
 
-// as músicas: quando o Romário mandar os arquivos, coloque em musicas/ e mude pra true
-var COM_MUSICA = false;
+// as músicas tocam de fundo (os arquivos ficam em musicas/, cortados com ferramentas/cortar-musica.py)
+var COM_MUSICA = true;
 
 var TEXTOS = {
   abertura: 'Julia & Romário',
@@ -253,8 +253,9 @@ var TEXTOS = {
   // a conversa daquela noite: quem fala ('ela' ou 'ele') e o que falou
   namoroConversa: [['ela', 'Quer ser?'], ['ele', 'Vc é minha namorada?'], ['ela', 'Então eu sou']],
   pedidoTitulo: 'o pedido',
+  pedidoOnde: 'no campestre',
   pedidoTexto: 'e o nosso namoro se tornou uma das partes mais bonitas da minha vida.',
-  pedidoPilula: 'agora com aliança e tudo',
+  pedidoPilula: 'a surpresa. foi simplesmente brilhante',
   videoTexto: 'e tem coisa que foto nenhuma guarda.',
   fotos: 'e cada uma delas virou lembrança.',
   motivosFim: 'e mais uns mil que não cabem aqui.',
@@ -267,37 +268,36 @@ var TEXTOS = {
 
 // os top momentos (o primeiro é o número 1)
 var MOMENTOS = [
-  { titulo: 'o primeiro beijo',        sub: '08/10/2025 · e tudo mudou' },
-  { titulo: 'o pedido',                sub: '29/11/2025 · com aliança e tudo' },
-  { titulo: 'o “quer ser?”',           sub: '12/10/2025 · “então eu sou”' },
-  { titulo: 'você e a minha família',  sub: '14/11/2025 · “eu adorei conhecer tua família”' },
-  { titulo: 'o buquê',                 sub: '06/03/2026 · “eu amei o buque”' }
+  { titulo: 'o dia em que eu te olhei',  sub: '28/09/2025 · e me encantei pela sua beleza e pelo seu jeito' },
+  { titulo: 'o pedido',                  sub: '29/11/2025 · a surpresa no campestre. simplesmente brilhante' },
+  { titulo: 'a festa fantasia',          sub: '01/11/2025 · você maravilhosa de Pooka' },
+  { titulo: 'a Oktoberfest',             sub: '23/10/2025 · a batata no cone que virou o seu buquê' },
+  { titulo: 'o Natal Luz',               sub: '20/11/2025 · em Dois Irmãos, a primeira vez saindo com os meus pais' }
 ];
 
-// as top músicas: quando ele mandar, preencha (capa = foto em fotos/, sem o .jpg)
-// ex.: { titulo: 'Nome da música', artista: 'Artista', capa: 'capa1' }
-// enquanto estiver vazia, as telas de músicas e da artista não aparecem
-var MUSICAS = [];
-var ARTISTA = null;   // ex.: { nome: 'Artista', texto: '2 das nossas 5 músicas são dela.', capas: ['capa1', 'capa2', 'capa3'] }
+// as top músicas (capa = foto em fotos/, sem o .jpg). a nº 1 é a primeira.
+// a música que toca em cada tela fica no "musica:" de cada tela, lá embaixo
+var MUSICAS = [
+  { titulo: 'Best Part',         artista: 'Daniel Caesar e H.E.R.', capa: 'capa-best-part' },
+  { titulo: 'Lei da Física',     artista: '2ZDinizz',               capa: 'capa-lei-da-fisica' },
+  { titulo: 'Te Amo Disgraça',   artista: 'Baco Exu do Blues',      capa: 'capa-te-amo-disgraca' },
+  { titulo: 'Foi Assim',         artista: 'Sotam',                  capa: 'capa-foi-assim' },
+  { titulo: 'Legendary Lovers',  artista: 'Katy Perry',             capa: 'capa-legendary-lovers' }
+];
+var ARTISTA = null;   // nenhum artista se repete nas 5, então a tela da artista não aparece
 
-// os motivos (rascunho feito com as frases que o Romário mandou)
+// os motivos (os 10 que o Romário mandou)
 var MOTIVOS = [
-  'pelo seu olhar',
-  'pelas nossas conversas',
-  'pela sua risada',
-  'pelos seus abraços',
-  'pelo seu jeito delicado de lírio',
-  'pelo seu sorriso de girassol',
-  'porque você virou a minha luz',
-  'pelos pequenos detalhes',
-  'pela vontade de estar perto, sem motivo nenhum',
-  'pelas nossas histórias e brincadeiras',
-  'porque com você tudo é verdadeiro',
-  'por tudo que a gente ainda vai viver',
-  'porque eu não consigo pensar no futuro sem você',
-  'porque você é a melhor parte da minha vida',
-  'porque eu quero continuar te descobrindo',
-  'porque eu quero uma vida inteira com você'
+  'Sua voz romântica',
+  'Seu cheiro aconchegante',
+  'Seu jeitinho perfeita de ser',
+  'Cada onda dos teus cachos significa meu amor por ti',
+  'Seu corpo esbelto, único e perfeito',
+  'Todas as formas de carinho que você demonstra por mim',
+  'Nossos momentos sendo melhores namorados',
+  'Cada risada e gargalhada que demos juntos, significa tudo pra mim',
+  'Sua compaixão, empatia e humildade com todos a sua volta',
+  'Eu amo te amar, e te amar me mostra o tanto que você me ama'
 ];
 
 /* ===================================================================== */
@@ -380,7 +380,7 @@ nova({ id: 'abertura', paleta: 'forte', dur: Infinity, html: function(){ return 
     '<div class="pequeno a-aparecer" style="--d:1.2s">' + (COM_MUSICA ? 'liga o som · ' : '') + 'toca pra passar · segura pra pausar</div>' +
   '</div>'; } });
 
-nova({ id: 'comeco', paleta: 'claro', musica: 'best-part', dur: 9.5, html: function(){
+nova({ id: 'comeco', paleta: 'claro', musica: 'foi-assim', dur: 9.5, html: function(){
   return '' +
   forma('estrela', 84, 16, 34, '#ff9ec7', 'gira', .3) +
   forma('onda', 22, 88, 40, '#ff4f9a', '', 3.4) +
@@ -393,7 +393,7 @@ nova({ id: 'comeco', paleta: 'claro', musica: 'best-part', dur: 9.5, html: funct
     '<div class="texto a-subir" style="--d:3.8s">ou ' + fmt(DIAS * 24) + ' horas. ' + esc(TEXTOS.comecoFim) + '</div>' +
   '</div>'; } });
 
-nova({ id: 'primeira', paleta: 'creme', musica: 'best-part', dur: 9, html: function(){
+nova({ id: 'primeira', paleta: 'creme', musica: 'foi-assim', dur: 9, html: function(){
   var baloes = '', d = 1.1;
   TEXTOS.primeiraEla.forEach(function(t){ baloes += '<div class="balao dela a-surgir" style="--d:' + d.toFixed(2) + 's">' + esc(t) + '</div>'; d += .5; });
   d += .7;
@@ -407,7 +407,7 @@ nova({ id: 'primeira', paleta: 'creme', musica: 'best-part', dur: 9, html: funct
     '<div class="grande destaque a-subir" style="--d:' + (d + .4).toFixed(2) + 's">' + esc(TEXTOS.primeiraDepois) + '</div>' +
   '</div>'; } });
 
-nova({ id: 'beijo', paleta: 'forte', musica: 'best-part', dur: 8, html: function(){ return '' +
+nova({ id: 'beijo', paleta: 'forte', musica: 'foi-assim', dur: 8, html: function(){ return '' +
   forma('coracao', 50, 30, 70, 'rgba(255,255,255,.16)', 'boia', .1) +
   forma('flor', 90, 94, 22, '#ffc4dc', 'gira', .6) +
   '<div class="conteudo">' +
@@ -417,7 +417,7 @@ nova({ id: 'beijo', paleta: 'forte', musica: 'best-part', dur: 8, html: function
     '<div class="pilula a-subir" style="--d:2.8s">' + esc(TEXTOS.beijoDepois) + '</div>' +
   '</div>'; } });
 
-nova({ id: 'namoro', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 10.5, html: function(){
+nova({ id: 'namoro', paleta: 'vinho', tema: 'foto', musica: 'lei-da-fisica', dur: 10.5, html: function(){
   var proximo;
   if (HOJE_E_MESVERSARIO) proximo = MESES_NAMORO % 12 === 0 ?
     'hoje faz ' + (MESES_NAMORO / 12) + (MESES_NAMORO === 12 ? ' ano!' : ' anos!') :
@@ -444,10 +444,10 @@ nova({ id: 'namoro', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 10
     pt +
   '</div>'; } });
 
-nova({ id: 'pedido', paleta: 'vinho', tema: 'foto', musica: 'all-of-me', dur: 8.5, html: function(){ return '' +
+nova({ id: 'pedido', paleta: 'vinho', tema: 'foto', musica: 'lei-da-fisica', dur: 8.5, html: function(){ return '' +
   '<div class="foto-fundo">' + img('pedido') + '</div>' +
   '<div class="conteudo">' +
-    '<div class="olho a-subir" style="--d:.4s">' + ddmm(dia(PEDIDO)) + '/' + PEDIDO[0] + '</div>' +
+    '<div class="olho a-subir" style="--d:.4s">' + ddmm(dia(PEDIDO)) + '/' + PEDIDO[0] + ' · ' + esc(TEXTOS.pedidoOnde) + '</div>' +
     '<div class="gigante a-subir" style="--d:.6s">' + esc(TEXTOS.pedidoTitulo) + '</div>' +
     '<div class="texto a-subir" style="--d:1.6s">' + esc(TEXTOS.pedidoTexto) + '</div>' +
     '<div class="linha a-subir" style="--d:2.6s"><span class="pilula">' + esc(TEXTOS.pedidoPilula) + '</span></div>' +
@@ -464,7 +464,7 @@ function seguidos(){
   return 'e foram ' + fmt(W.maiorSequencia) + ' dias seguidos sem ficar sem se falar.';
 }
 
-nova({ id: 'mensagens', precisa: 'whats', paleta: 'vinho', musica: 'best-part', dur: 8.5, html: function(){
+nova({ id: 'mensagens', precisa: 'whats', paleta: 'vinho', musica: 'te-amo-disgraca', dur: 8.5, html: function(){
   var porDia = W.total / Math.max(1, W.diasTotal);
   var maior = Math.max.apply(null, W.meses.map(function(m){ return m[1]; }));
   var nomesMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
@@ -483,7 +483,7 @@ nova({ id: 'mensagens', precisa: 'whats', paleta: 'vinho', musica: 'best-part', 
     aviso +
   '</div>'; } });
 
-nova({ id: 'quem', precisa: 'whats', paleta: 'claro', musica: 'best-part', dur: 8.5, html: function(){
+nova({ id: 'quem', precisa: 'whats', paleta: 'claro', musica: 'te-amo-disgraca', dur: 8.5, html: function(){
   var ela = W.pessoas.ela, ele = W.pessoas.ele, tot = Math.max(1, ela + ele);
   var pe = Math.round(100 * ela / tot), pt = 100 - pe;
   var veredito = esc(ela >= ele ? TEXTOS.quemElaGanhou : TEXTOS.quemEuGanhei);
@@ -502,7 +502,7 @@ nova({ id: 'quem', precisa: 'whats', paleta: 'claro', musica: 'best-part', dur: 
     puxa +
   '</div>'; } });
 
-nova({ id: 'teamo', precisa: 'whats', paleta: 'vinho', musica: 'best-part', dur: 8, html: function(){
+nova({ id: 'teamo', precisa: 'whats', paleta: 'vinho', musica: 'te-amo-disgraca', dur: 8, html: function(){
   var t = W.teAmo, total = t.ela + t.ele;
   var pt = W.primeiroTeAmo;
   var primeiro = pt ? 'o primeiro foi em ' + ddmm(isoParaData(pt.data)) + '/' + pt.data.slice(0, 4) + ', às ' + pt.hora.replace(':', 'h') +
@@ -521,7 +521,7 @@ nova({ id: 'teamo', precisa: 'whats', paleta: 'vinho', musica: 'best-part', dur:
       '<div class="texto a-subir" style="--d:3.3s">' + esc(primeiro) + '</div>') +
   '</div>'; } });
 
-nova({ id: 'emoji', precisa: 'whats', paleta: 'creme', musica: 'best-part', dur: 7.5, html: function(){
+nova({ id: 'emoji', precisa: 'whats', paleta: 'creme', musica: 'te-amo-disgraca', dur: 7.5, html: function(){
   if (!W.emojis.length) return '<div class="conteudo"><div class="grande">sem emoji nenhum?</div></div>';
   var resto = W.emojis.slice(1).map(function(e, i){ return '<span class="a-surgir" style="--d:' + (2.2 + i * .15) + 's"><b>' + e[0] + '</b>' + fmt(e[1]) + '</span>'; }).join('');
   return '' +
@@ -533,7 +533,7 @@ nova({ id: 'emoji', precisa: 'whats', paleta: 'creme', musica: 'best-part', dur:
     (resto ? '<div class="emojis">' + resto + '</div>' : '') +
   '</div>'; } });
 
-nova({ id: 'hora', precisa: 'whats', paleta: 'escuro', musica: 'best-part', dur: 8.5, html: function(){
+nova({ id: 'hora', precisa: 'whats', paleta: 'escuro', musica: 'te-amo-disgraca', dur: 8.5, html: function(){
   var h = W.horas, pico = h.indexOf(Math.max.apply(null, h)), maior = h[pico] || 1;
   var cols = h.map(function(c, i){ return '<i class="a-coluna' + (i === pico ? ' pico' : '') + '" style="--d:' + (1.4 + i * .04) + 's;height:' + Math.max(2, 100 * c / maior) + '%"></i>'; }).join('');
   var frase = pico < 5 || pico >= 22 ? 'a gente é do time da madrugada.' :
@@ -549,7 +549,7 @@ nova({ id: 'hora', precisa: 'whats', paleta: 'escuro', musica: 'best-part', dur:
     '<div class="medio a-subir" style="--d:2.6s">' + frase + '</div>' +
   '</div>'; } });
 
-nova({ id: 'recorde', precisa: 'whats', paleta: 'forte', musica: 'best-part', dur: 8.5, html: function(){
+nova({ id: 'recorde', precisa: 'whats', paleta: 'forte', musica: 'te-amo-disgraca', dur: 8.5, html: function(){
   var extras = [];
   if (W.audios) extras.push(fmt(W.audios) + ' áudios');
   if (W.bomDia) extras.push(fmt(W.bomDia) + ' bons dias');
@@ -566,7 +566,7 @@ nova({ id: 'recorde', precisa: 'whats', paleta: 'forte', musica: 'best-part', du
     '<div class="linha">' + extras.map(function(e, i){ return '<span class="pilula a-surgir" style="--d:' + (3.2 + i * .2) + 's">' + e + '</span>'; }).join('') + '</div>' +
   '</div>'; } });
 
-nova({ id: 'ligacao', precisa: 'whats', paleta: 'escuro', musica: 'best-part', dur: 9, html: function(){
+nova({ id: 'ligacao', precisa: 'whats', paleta: 'escuro', musica: 'te-amo-disgraca', dur: 9, html: function(){
   var horas = W.minutosLigacao / 60, m = W.maiorLigacao;
   var maior = '';
   if (m && m.minutos >= 120){
@@ -587,7 +587,7 @@ nova({ id: 'ligacao', precisa: 'whats', paleta: 'escuro', musica: 'best-part', d
     (maior ? '<div class="pilula a-subir" style="--d:3.2s">' + esc(maior) + '</div>' : '') +
   '</div>'; } });
 
-nova({ id: 'momentos', paleta: 'claro', musica: 'all-of-me', dur: 10, html: function(){
+nova({ id: 'momentos', paleta: 'claro', musica: 'legendary-lovers', dur: 10, html: function(){
   var itens = MOMENTOS.map(function(m, i){
     return '<div class="item a-subir" style="--d:' + (.7 + i * .45) + 's"><b class="pos destaque">' + (i + 1) + '</b><div><div class="tit">' + esc(m.titulo) + '</div><div class="sub">' + esc(m.sub) + '</div></div></div>';
   }).join('');
@@ -599,33 +599,7 @@ nova({ id: 'momentos', paleta: 'claro', musica: 'all-of-me', dur: 10, html: func
     '<div class="lista" style="margin-top:8px">' + itens + '</div>' +
   '</div>'; } });
 
-nova({ id: 'artista', precisa: 'artista', paleta: 'forte', musica: 'love-drought', dur: 9, html: function(){
-  var c = ARTISTA.capas || [];
-  return '' +
-  '<div class="conteudo">' +
-    '<div class="leque">' +
-      (c[1] ? '<img class="a-girar" style="--d:.2s;--r0:-40deg;transform:rotate(-14deg) translateX(-42%)" data-src="fotos/' + c[1] + '.jpg" alt="">' : '') +
-      (c[2] ? '<img class="a-girar" style="--d:.35s;--r0:40deg;transform:rotate(12deg) translateX(42%)" data-src="fotos/' + c[2] + '.jpg" alt="">' : '') +
-      (c[0] ? '<img class="a-surgir" style="--d:.5s" data-src="fotos/' + c[0] + '.jpg" alt="">' : '') +
-    '</div>' +
-    '<div class="olho a-subir" style="--d:1s">a artista do ano</div>' +
-    '<div class="gigante a-surgir" style="--d:1.3s">' + esc(ARTISTA.nome) + '</div>' +
-    '<div class="texto a-subir" style="--d:2.3s">' + esc(ARTISTA.texto || '') + '</div>' +
-  '</div>'; } });
-
-nova({ id: 'musicas', precisa: 'musicas', paleta: 'escuro', musica: 'pyramids', dur: 9.5, html: function(){
-  var itens = MUSICAS.map(function(m, i){
-    return '<div class="item a-subir" style="--d:' + (.7 + i * .4) + 's"><b class="pos destaque">' + (i + 1) + '</b>' + img(m.capa, 'capa') + '<div><div class="tit">' + esc(m.titulo) + '</div><div class="sub">' + esc(m.artista) + '</div></div></div>';
-  }).join('');
-  return '' +
-  forma('onda', 80, 10, 36, '#ff4f9a', '', .4) +
-  '<div class="conteudo">' +
-    '<div class="olho a-subir" style="--d:.1s">as nossas</div>' +
-    '<div class="grande a-subir" style="--d:.25s">top músicas</div>' +
-    '<div class="lista" style="margin-top:8px">' + itens + '</div>' +
-  '</div>'; } });
-
-nova({ id: 'video', paleta: 'vinho', tema: 'foto', musica: 'pyramids', dur: 9, html: function(){ return '' +
+nova({ id: 'video', paleta: 'vinho', tema: 'foto', musica: 'legendary-lovers', dur: 9, html: function(){ return '' +
   '<div class="foto-fundo"><video data-src="videos/rede.mp4" muted loop playsinline webkit-playsinline preload="none"></video></div>' +
   '<div class="conteudo">' +
     '<div class="grande a-subir" style="--d:1.2s">' + esc(TEXTOS.videoTexto) + '</div>' +
@@ -633,7 +607,7 @@ nova({ id: 'video', paleta: 'vinho', tema: 'foto', musica: 'pyramids', dur: 9, h
   entrar: function(el){ var v = el.querySelector('video'); v.muted = true; try { v.currentTime = 0; } catch (e){} var p = v.play(); if (p && p.catch) p.catch(function(){}); },
   sair: function(el){ el.querySelector('video').pause(); } });
 
-nova({ id: 'fotos', paleta: 'claro', barras: 'foto', musica: 'pyramids', dur: 9, html: function(){
+nova({ id: 'fotos', paleta: 'claro', barras: 'foto', musica: 'legendary-lovers', dur: 9, html: function(){
   var cols = [[], [], []];
   for (var i = 0; i < 18; i++) cols[i % 3].push(img('mosaico' + (i + 1)));
   // repete pra coluna nunca acabar enquanto anda
@@ -648,7 +622,34 @@ nova({ id: 'fotos', paleta: 'claro', barras: 'foto', musica: 'pyramids', dur: 9,
     '<div class="texto a-subir selo" style="--d:2.6s;padding:14px 20px;border-radius:18px">' + esc(TEXTOS.fotos) + '</div>' +
   '</div>'; } });
 
-nova({ id: 'motivos', paleta: 'forte', musica: 'pyramids', dur: 11.5, html: function(){ return '' +
+nova({ id: 'artista', precisa: 'artista', paleta: 'forte', musica: 'best-part', dur: 9, html: function(){
+  var c = ARTISTA.capas || [];
+  return '' +
+  '<div class="conteudo">' +
+    '<div class="leque">' +
+      (c[1] ? '<img class="a-girar" style="--d:.2s;--r0:-40deg;transform:rotate(-14deg) translateX(-42%)" data-src="fotos/' + c[1] + '.jpg" alt="">' : '') +
+      (c[2] ? '<img class="a-girar" style="--d:.35s;--r0:40deg;transform:rotate(12deg) translateX(42%)" data-src="fotos/' + c[2] + '.jpg" alt="">' : '') +
+      (c[0] ? '<img class="a-surgir" style="--d:.5s" data-src="fotos/' + c[0] + '.jpg" alt="">' : '') +
+    '</div>' +
+    '<div class="olho a-subir" style="--d:1s">a artista do ano</div>' +
+    '<div class="gigante a-surgir" style="--d:1.3s">' + esc(ARTISTA.nome) + '</div>' +
+    '<div class="texto a-subir" style="--d:2.3s">' + esc(ARTISTA.texto || '') + '</div>' +
+  '</div>'; } });
+
+nova({ id: 'musicas', precisa: 'musicas', paleta: 'escuro', musica: 'best-part', dur: 9.5, html: function(){
+  var itens = MUSICAS.map(function(m, i){
+    return '<div class="item a-subir" style="--d:' + (.7 + i * .4) + 's"><b class="pos destaque">' + (i + 1) + '</b>' + img(m.capa, 'capa') + '<div><div class="tit">' + esc(m.titulo) + '</div><div class="sub">' + esc(m.artista) + '</div></div></div>';
+  }).join('');
+  return '' +
+  forma('onda', 80, 10, 36, '#ff4f9a', '', .4) +
+  '<div class="conteudo">' +
+    '<div class="olho a-subir" style="--d:.1s">as nossas</div>' +
+    '<div class="grande a-subir" style="--d:.25s">top músicas</div>' +
+    '<div class="lista" style="margin-top:8px">' + itens + '</div>' +
+  '</div>'; } });
+
+var PASSO_MOTIVO = MOTIVOS.length > 12 ? .55 : 1.7;
+nova({ id: 'motivos', paleta: 'forte', musica: 'best-part', dur: 1.1 + MOTIVOS.length * PASSO_MOTIVO + 2.6, html: function(){ return '' +
   forma('coracao', 82, 16, 30, '#ffc4dc', 'boia', .2) +
   forma('coracao', 14, 86, 18, '#3b0820', 'boia', .5) +
   '<div class="conteudo">' +
@@ -659,8 +660,8 @@ nova({ id: 'motivos', paleta: 'forte', musica: 'pyramids', dur: 11.5, html: func
   '</div>'; },
   tick: function(t, el){
     var m = el.querySelector('.motivo');
-    var k = Math.floor((t - 1.1) / .55);
-    var txt = k < 0 ? '' : (k < MOTIVOS.length ? MOTIVOS[k] : TEXTOS.motivosFim);
+    var k = Math.floor((t - 1.1) / PASSO_MOTIVO);
+    var txt = k < 0 ? '' : (k < MOTIVOS.length ? (MOTIVOS.length <= 12 ? (k + 1) + '. ' : '') + MOTIVOS[k] : TEXTOS.motivosFim);
     if (m.textContent !== txt){ m.textContent = txt; m.style.fontSize = txt.length > 46 ? 'min(calc(var(--u)*8.6), calc(var(--v)*4.3))' : ''; }
   } });
 
@@ -687,7 +688,7 @@ function personalidade(){
   return { nome: nome, tracos: tracos.slice(0, 3) };
 }
 
-nova({ id: 'personalidade', paleta: 'escuro', musica: 'pyramids', dur: 9, html: function(){
+nova({ id: 'personalidade', paleta: 'escuro', musica: 'best-part', dur: 9, html: function(){
   var p = personalidade();
   return '' +
   '<div class="polaroid a-girar" style="--d:.1s;--r:-6deg;--r0:-30deg;right:calc(var(--u)*8);top:calc(var(--topo) + 70px);width:calc(var(--u)*44);height:calc(var(--u)*54)">' + img('personalidade') + '</div>' +
@@ -717,7 +718,7 @@ function itensResumo(){
   return it.slice(0, 8);
 }
 
-nova({ id: 'resumo', paleta: 'forte', musica: 'pyramids', dur: 16, html: function(){
+nova({ id: 'resumo', paleta: 'forte', musica: 'best-part', dur: 16, html: function(){
   var grade = itensResumo().map(function(x, i){ return '<div class="a-subir" style="--d:' + (.8 + i * .12) + 's"><div class="rot">' + esc(x[0]) + '</div><div class="val">' + esc(x[1]) + '</div></div>'; }).join('');
   return '' +
   '<div class="conteudo">' +
@@ -730,7 +731,7 @@ nova({ id: 'resumo', paleta: 'forte', musica: 'pyramids', dur: 16, html: functio
   '</div>'; },
   entrar: function(){ prepararImagemResumo(); } });
 
-nova({ id: 'final', paleta: 'vinho', tema: 'foto', musica: 'especial', dur: Infinity, html: function(){ return '' +
+nova({ id: 'final', paleta: 'vinho', tema: 'foto', musica: 'best-part', dur: Infinity, html: function(){ return '' +
   '<div class="foto-fundo">' + img('final') + '</div>' +
   '<div class="conteudo">' +
     '<div class="medio a-subir" style="--d:.6s">' + esc(TEXTOS.finalTitulo) + '</div>' +

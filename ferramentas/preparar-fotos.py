@@ -30,6 +30,15 @@ MOSAICO = [
     'foto16', 'foto18', 'foto19', 'foto20', 'foto22', 'foto23', 'foto24', 'foto25', 'foto08',
 ]
 
+# as capas das top músicas são fotos deles (quadradas)
+CAPAS = {
+    'capa-best-part': 'foto19',         # o beijo de noite
+    'capa-lei-da-fisica': 'foto03',     # olhando um pro outro
+    'capa-te-amo-disgraca': 'foto25',   # beijo no rosto
+    'capa-foi-assim': 'foto11',         # na festa
+    'capa-legendary-lovers': 'foto20',  # no shopping
+}
+
 
 def abrir(nome):
     im = Image.open(os.path.join(ORIGEM, nome + '.jpg'))
@@ -52,7 +61,10 @@ def main():
     for i, original in enumerate(MOSAICO):
         im = ImageOps.fit(abrir(original), (420, 560), Image.LANCZOS, centering=(0.5, 0.35))
         total += salvar(im, 'mosaico%d' % (i + 1), 78)
-    print('%d fotos, %.1f MB' % (len(GRANDES) + len(MOSAICO), total / 1e6))
+    for nome, original in CAPAS.items():
+        im = ImageOps.fit(abrir(original), (320, 320), Image.LANCZOS, centering=(0.5, 0.4))
+        total += salvar(im, nome, 80)
+    print('%d fotos, %.1f MB' % (len(GRANDES) + len(MOSAICO) + len(CAPAS), total / 1e6))
 
 
 if __name__ == '__main__':
