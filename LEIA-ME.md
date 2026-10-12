@@ -8,10 +8,10 @@ pela conversa:
 
 - **17/09/2025, 12h23:** a primeira mensagem, dela: "Qual o nome da loja do pastel??".
 - **08/10/2025:** o primeiro beijo.
-- **12/10/2025, 22h48:** o "quer ser?" por mensagem. Nessa noite veio o primeiro "te amo"
-  (23h31), e é o dia recorde de mensagens.
-- **29/11/2025:** o pedido de namoro, uma surpresa no campestre. **Os dias de namoro e os
-  mesversários contam daqui.**
+- **12/10/2025, 22h48:** o "quer ser?" por mensagem. **Eles namoram desde esse dia: os dias
+  de namoro e os mesversários contam daqui**, e hoje (12/10/2026) faz 1 ano. Nessa noite veio
+  o primeiro "te amo" (23h31), e é o dia recorde de mensagens.
+- **29/11/2025:** o pedido de namoro, uma surpresa no campestre.
 
 ## As telas, em ordem
 
@@ -19,8 +19,9 @@ pela conversa:
 2. **O começo:** 17/09 e quantos dias se passaram (conta sozinho pela data do aparelho).
 3. **A primeira mensagem:** os balões do pastel.
 4. **O primeiro beijo.**
-5. **O pedido (29/11), no campestre:** a foto do buquê, os dias de namoro e quanto falta pro
-   próximo mesversário. No dia 29/11/2026 aparece "hoje faz 1 ano!".
+5. **O pedido (29/11), no campestre:** a foto do buquê, os dias de namoro (desde 12/10) e quanto
+   falta pro próximo mesversário. No dia 12 de cada mês aparece "hoje é o mesversário de N
+   meses", e em 12/10/2026 aparece "hoje faz 1 ano!".
 6. **WhatsApp:**
    - as mensagens, com um gráfico por mês;
    - quem manda mais;
@@ -68,7 +69,7 @@ No iPhone o som só começa depois do toque em "começar". O botão no canto de 
 
 Tudo fica no começo do `<script>` do `index.html`:
 
-- `COMECO`, `BEIJO`, `QUER_SER` e `PEDIDO`: as datas.
+- `COMECO`, `BEIJO`, `NAMORO` e `PEDIDO`: as datas.
 - `TEXTOS`: todos os textos, incluindo os balões da primeira mensagem.
 - `MOMENTOS`: os top momentos. O primeiro da lista é o número 1.
 - `MUSICAS`, `ARTISTA` e `COM_MUSICA`: as músicas (as capas são fotos deles, em `preparar-fotos.py`).

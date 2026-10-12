@@ -223,8 +223,8 @@ button{font-family:inherit;color:inherit;cursor:pointer}
    ===================================================================== */
 var COMECO = [2025, 9, 17];   // a primeira mensagem no whatsapp (ano, mês, dia)
 var BEIJO = [2025, 10, 8];    // o primeiro beijo
-var QUER_SER = [2025, 10, 12]; // o "quer ser?" por mensagem (a noite do primeiro te amo e o dia recorde)
-var PEDIDO = [2025, 11, 29];   // o pedido de namoro: daqui contam os dias de namoro e os mesversários
+var NAMORO = [2025, 10, 12];  // o dia em que começaram a namorar (o "quer ser?"): daqui contam os dias de namoro e os mesversários
+var PEDIDO = [2025, 11, 29];  // o pedido de namoro (a surpresa no campestre)
 var TOTAL_FOTOS = 26;         // só aparece se não tiver os números do whatsapp
 
 // as músicas tocam de fundo (os arquivos ficam em musicas/, cortados com ferramentas/cortar-musica.py)
@@ -321,7 +321,7 @@ var HOJE = (function(){
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 })();
 var DIAS = Math.round((HOJE - dia(COMECO)) / 864e5);
-var DIAS_NAMORO = Math.round((HOJE - dia(PEDIDO)) / 864e5);
+var DIAS_NAMORO = Math.round((HOJE - dia(NAMORO)) / 864e5);
 // quantos anos fechados desde o primeiro beijo (pela data do aparelho)
 var ANOS_BEIJO = (function(){
   var a = HOJE.getFullYear() - BEIJO[0];
@@ -330,12 +330,12 @@ var ANOS_BEIJO = (function(){
 })();
 var MESES_NAMORO = (function(){
   var m = 0;
-  while (new Date(PEDIDO[0], PEDIDO[1] - 1 + m + 1, PEDIDO[2]) <= HOJE) m++;
+  while (new Date(NAMORO[0], NAMORO[1] - 1 + m + 1, NAMORO[2]) <= HOJE) m++;
   return m;
 })();
-var PROXIMO_MES = new Date(PEDIDO[0], PEDIDO[1] - 1 + MESES_NAMORO + 1, PEDIDO[2]);
+var PROXIMO_MES = new Date(NAMORO[0], NAMORO[1] - 1 + MESES_NAMORO + 1, NAMORO[2]);
 var DIAS_ATE_PROXIMO = Math.round((PROXIMO_MES - HOJE) / 864e5);
-var HOJE_E_MESVERSARIO = HOJE.getDate() === PEDIDO[2] && MESES_NAMORO > 0;
+var HOJE_E_MESVERSARIO = HOJE.getDate() === NAMORO[2] && MESES_NAMORO > 0;
 
 /* ---------- formas de enfeite ---------- */
 function estrela(pontas, dentro){
@@ -494,7 +494,7 @@ nova({ id: 'teamo', precisa: 'whats', paleta: 'vinho', musica: 'te-amo-disgraca'
   var t = W.teAmo, total = t.ela + t.ele;
   var pt = W.primeiroTeAmo;
   var primeiro = pt ? 'o primeiro foi em ' + ddmm(isoParaData(pt.data)) + '/' + pt.data.slice(0, 4) + ', às ' + pt.hora.replace(':', 'h') +
-    (pt.data === iso(dia(QUER_SER)) ? ', na noite do “quer ser?”. ' : '. ') + (pt.quem === 'ele' ? 'e fui eu que falei primeiro.' : 'e foi você que falou primeiro.') : 'e ainda acho pouco.';
+    (pt.data === iso(dia(NAMORO)) ? ', na noite do “quer ser?”. ' : '. ') + (pt.quem === 'ele' ? 'e fui eu que falei primeiro.' : 'e foi você que falou primeiro.') : 'e ainda acho pouco.';
   return '' +
   forma('coracao', 80, 20, 40, '#ff4f9a', 'boia', .3) +
   forma('coracao', 16, 84, 24, '#ffc4dc', 'boia', .7) +
@@ -550,7 +550,7 @@ nova({ id: 'recorde', precisa: 'whats', paleta: 'forte', musica: 'te-amo-disgrac
     '<div class="olho a-subir" style="--d:.2s">o dia recorde</div>' +
     '<div class="gigante a-surgir" style="--d:.5s">' + ddmm(isoParaData(W.diaRecorde.data)) + '</div>' +
     '<div class="medio a-subir" style="--d:1.3s">' + conta(W.diaRecorde.total, 1.4, 1.4) + ' mensagens num dia só.</div>' +
-    '<div class="texto a-subir" style="--d:2.4s">' + esc(W.diaRecorde.data === iso(dia(QUER_SER)) ? TEXTOS.recordeQuerSer : TEXTOS.recordeTexto) + '</div>' +
+    '<div class="texto a-subir" style="--d:2.4s">' + esc(W.diaRecorde.data === iso(dia(NAMORO)) ? TEXTOS.recordeQuerSer : TEXTOS.recordeTexto) + '</div>' +
     '<div class="linha">' + extras.map(function(e, i){ return '<span class="pilula a-surgir" style="--d:' + (3.2 + i * .2) + 's">' + e + '</span>'; }).join('') + '</div>' +
   '</div>'; } });
 
